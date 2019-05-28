@@ -3,4 +3,8 @@
     <string name="password">Password</string>
     <string name="don_t_have_account_sign_up">Don\'t have account? Sign Up</string>
     <string name="login">LOGIN</string>
+    <string name="email">Email</string>
+    <string name="valid_email_error_text">Enter an valid email ID</string>
+    <string name="valid_password_error_text">Min length: 8</string>
+    <string name="statistics">Statistics</string>
 </resources>
