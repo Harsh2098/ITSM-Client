@@ -1,9 +1,6 @@
 package com.hmproductions.itsmclient
 
-import com.hmproductions.itsmclient.data.LoginDetails
-import com.hmproductions.itsmclient.data.LoginResponse
-import com.hmproductions.itsmclient.data.Result
-import com.hmproductions.itsmclient.data.SignUpDetails
+import com.hmproductions.itsmclient.data.*
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -18,5 +15,5 @@ interface ITSMClient {
     fun signUp(@Body signUpDetails: SignUpDetails): Call<LoginResponse>
 
     @GET("core/data")
-    fun getTickets(@Header("Authorization") authorization: String): Call<Result>
+    fun getTickets(@Header("Authorization") authorization: String): Call<TicketResponse>
 }

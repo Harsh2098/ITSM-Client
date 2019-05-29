@@ -55,7 +55,7 @@ class LoginActivity : AppCompatActivity() {
                             if (statusCode != 200 && statusCode != 201) {
                                 toast(message)
                             } else if (token == "") {
-
+                                toast("Internal server error")
                             } else {
                                 Constants.USER_TOKEN = token
                                 startActivity(Intent(this@LoginActivity, MainActivity::class.java))
