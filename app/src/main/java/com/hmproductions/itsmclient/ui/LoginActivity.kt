@@ -1,15 +1,16 @@
 package com.hmproductions.itsmclient.ui
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Patterns
+import androidx.appcompat.app.AppCompatActivity
 import com.hmproductions.itsmclient.ITSMClient
 import com.hmproductions.itsmclient.R
 import com.hmproductions.itsmclient.dagger.ContextModule
 import com.hmproductions.itsmclient.dagger.DaggerITSMApplicationComponent
 import com.hmproductions.itsmclient.data.LoginDetails
 import com.hmproductions.itsmclient.utils.Constants
+import com.hmproductions.itsmclient.utils.Miscellaneous.extractErrorMessage
 import kotlinx.android.synthetic.main.activity_login.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
@@ -27,44 +28,40 @@ class LoginActivity : AppCompatActivity() {
 
         DaggerITSMApplicationComponent.builder().contextModule(ContextModule(this)).build().inject(this)
 
-        setupLoginButton()
+        loginButton.setOnClickListener { setupLoginButton() }
+        signUpTextView.setOnClickListener { setupSignUpText() }
     }
 
     private fun setupLoginButton() {
-        loginButton.setOnClickListener {
-            if(emailEditText.text.toString().isEmpty() || emailEditText.text.toString() == "" ||
-                !Patterns.EMAIL_ADDRESS.matcher(emailEditText.text.toString()).matches()) {
-                toast(R.string.valid_email_error_text)
-                return@setOnClickListener
-            }
+        if (emailEditText.text.toString().isEmpty() || emailEditText.text.toString() == "" ||
+            !Patterns.EMAIL_ADDRESS.matcher(emailEditText.text.toString()).matches()
+        ) {
+            toast(R.string.valid_email_error_text)
+            return
+        }
 
-            if(passwordEditText.text.isEmpty() || passwordEditText.text.toString() == "" || passwordEditText.text.toString().length < 8) {
-                toast(R.string.valid_password_error_text)
-                return@setOnClickListener
-            }
+        if (passwordEditText.text.isEmpty() || passwordEditText.text.toString() == "" || passwordEditText.text.toString().length < 8) {
+            toast(R.string.valid_password_error_text)
+            return
+        }
 
-            doAsync {
-                val loginResponse = client
-                    .login(LoginDetails(emailEditText.text.toString(), passwordEditText.text.toString()))
-                    .execute()
-                    .body()
+        doAsync {
+            val loginResponse = client
+                .login(LoginDetails(emailEditText.text.toString(), passwordEditText.text.toString())).execute()
 
-                uiThread {
-                    if (loginResponse != null) {
-                        with(loginResponse) {
-                            if (statusCode != 200 && statusCode != 201) {
-                                toast(message)
-                            } else if (token == "") {
-                                toast("Internal server error")
-                            } else {
-                                Constants.USER_TOKEN = token
-                                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
-                                finish()
-                            }
-                        }
-                    }
+            uiThread {
+                if (loginResponse.isSuccessful) {
+                    Constants.USER_TOKEN = loginResponse.body()?.token
+                    startActivity(Intent(this@LoginActivity, MainActivity::class.java))
+                    finish()
+                } else {
+                    toast(extractErrorMessage(loginResponse.errorBody()?.string()))
                 }
             }
         }
+    }
+
+    private fun setupSignUpText() {
+        startActivity(Intent(this, SignUpActivity::class.java))
     }
 }

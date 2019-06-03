@@ -15,3 +15,5 @@ data class SignUpDetails(val email: String, val password: String, val company: S
                          val admin: Boolean)
 
 data class LoginResponse(val statusCode: Int, val message: String, val token: String)
+
+data class ErrorMessage(val statusCode: Int, val message: String)

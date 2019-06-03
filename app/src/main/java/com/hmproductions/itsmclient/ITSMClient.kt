@@ -1,6 +1,9 @@
 package com.hmproductions.itsmclient
 
-import com.hmproductions.itsmclient.data.*
+import com.hmproductions.itsmclient.data.LoginDetails
+import com.hmproductions.itsmclient.data.LoginResponse
+import com.hmproductions.itsmclient.data.SignUpDetails
+import com.hmproductions.itsmclient.data.TicketResponse
 import retrofit2.Call
 import retrofit2.http.*
 
