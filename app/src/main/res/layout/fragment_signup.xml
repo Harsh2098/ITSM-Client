@@ -7,7 +7,7 @@
     android:layout_marginStart="8dp"
     android:layout_marginTop="8dp"
     android:padding="4dp"
-    tools:context=".ui.SignUpActivity">
+    tools:context=".fragment.SignUpFragment">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/emailEditTextTIL"

@@ -1,35 +1,47 @@
 package com.hmproductions.itsmclient.ui
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import com.hmproductions.itsmclient.ITSMClient
+import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 import com.hmproductions.itsmclient.R
-import com.hmproductions.itsmclient.adapter.TicketRecyclerAdapter
-import com.hmproductions.itsmclient.dagger.DaggerITSMApplicationComponent
-import com.hmproductions.itsmclient.utils.Constants
-import org.jetbrains.anko.toast
-import javax.inject.Inject
+import com.hmproductions.itsmclient.utils.hideKeyboard
+import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.contentView
 
-class MainActivity : AppCompatActivity(), TicketRecyclerAdapter.OnTicketClickListener {
-
-    @Inject
-    lateinit var client: ITSMClient
-
-    private lateinit var ticketsRecyclerAdapter: TicketRecyclerAdapter
+class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        title = getString(R.string.statistics)
+        title = getString(R.string.app_name)
 
-        DaggerITSMApplicationComponent.builder().build().inject(this)
-        toast(Constants.USER_TOKEN)
+        setSupportActionBar(mainToolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setHomeAsUpIndicator(ContextCompat.getDrawable(this, R.drawable.hamburger_icon))
 
-        ticketsRecyclerAdapter = TicketRecyclerAdapter(this, null, this)
+        setupNavigationDrawer()
     }
 
+    private fun setupNavigationDrawer() {
+        val host = supportFragmentManager.findFragmentById(R.id.main_host_fragment) as NavHostFragment
+        navigationViewLeft.setupWithNavController(host.navController)
+    }
 
-    override fun onTicketClick(position: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+
+        contentView?.hideKeyboard()
+
+        when (item.itemId) {
+            android.R.id.home -> {
+                mainDrawerLayout!!.openDrawer(GravityCompat.START)  // OPEN DRAWER
+                return true
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 }

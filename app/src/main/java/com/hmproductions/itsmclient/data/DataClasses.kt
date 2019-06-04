@@ -11,9 +11,8 @@ data class Ticket(val sysId: String, val number: String, val short_description: 
 
 data class LoginDetails(val email: String, val password: String)
 
-data class SignUpDetails(val email: String, val password: String, val company: String, val tier: Int, val designation: String,
-                         val admin: Boolean)
+data class SignUpDetails(val email: String, val password: String, val company: String, val tier: Int, val designation: String)
 
-data class LoginResponse(val statusCode: Int, val message: String, val token: String)
+data class LoginResponse(val statusCode: Int, val message: String, val token: String, val isAdmin: Boolean)
 
 data class ErrorMessage(val statusCode: Int, val message: String)

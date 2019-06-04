@@ -1,15 +1,16 @@
 package com.hmproductions.itsmclient.dagger
 
-import com.hmproductions.itsmclient.ui.LoginActivity
+import com.hmproductions.itsmclient.fragment.LoginFragment
 import com.hmproductions.itsmclient.ui.MainActivity
-import com.hmproductions.itsmclient.ui.SignUpActivity
+import com.hmproductions.itsmclient.fragment.SignUpFragment
 import dagger.Component
 
 @ITSMApplicationScope
 @Component(modules = [ContextModule::class, ClientModule::class])
 interface ITSMApplicationComponent {
 
-    fun inject(loginActivity: LoginActivity)
     fun inject(mainActivity: MainActivity)
-    fun inject(signUpActivity: SignUpActivity)
+
+    fun inject(loginFragment: LoginFragment)
+    fun inject(signUpFragment: SignUpFragment)
 }

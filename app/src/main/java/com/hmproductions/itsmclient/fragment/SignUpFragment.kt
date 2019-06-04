@@ -1,33 +1,39 @@
-package com.hmproductions.itsmclient.ui
+package com.hmproductions.itsmclient.fragment
 
 import android.os.Bundle
 import android.util.Patterns
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.hmproductions.itsmclient.ITSMClient
 import com.hmproductions.itsmclient.R
 import com.hmproductions.itsmclient.dagger.DaggerITSMApplicationComponent
 import com.hmproductions.itsmclient.data.SignUpDetails
 import com.hmproductions.itsmclient.utils.Miscellaneous
-import kotlinx.android.synthetic.main.activity_sign_up.*
+import kotlinx.android.synthetic.main.fragment_signup.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 import javax.inject.Inject
 
-class SignUpActivity : AppCompatActivity() {
+class SignUpFragment : Fragment() {
 
     @Inject
     lateinit var client: ITSMClient
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sign_up)
-        title = "Sign Up"
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        return inflater.inflate(R.layout.fragment_signup, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         DaggerITSMApplicationComponent.builder().build().inject(this)
 
         val spinnerAdapter =
-            ArrayAdapter.createFromResource(this, R.array.designations, android.R.layout.simple_spinner_item)
+            ArrayAdapter.createFromResource(context!!, R.array.designations, android.R.layout.simple_list_item_1)
         designationSpinner.adapter = spinnerAdapter
 
         signUpButton.setOnClickListener {
@@ -40,42 +46,41 @@ class SignUpActivity : AppCompatActivity() {
 
     private fun onSignUpButtonClick(email: String, password: String, confirmPassword: String, company: String) {
         if (email.isEmpty() || email == "" || !Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            toast(R.string.valid_email_error_text)
+            context?.toast(R.string.valid_email_error_text)
             return
         }
 
         if (password.isEmpty() || password.isBlank()) {
-            toast(R.string.valid_password_error_text)
+            context?.toast(R.string.valid_password_error_text)
             return
         }
 
         if (password != confirmPassword) {
-            toast(R.string.passwords_dont_match)
+            context?.toast(R.string.passwords_dont_match)
             return
         }
 
         if (company.isEmpty() || company.isBlank()) {
-            toast(R.string.valid_password_error_text)
+            context?.toast(R.string.valid_password_error_text)
             return
         }
 
         val designation = resources.getStringArray(R.array.designations)[designationSpinner.selectedItemPosition]
-        val isAdmin = email.contains("harsh", true)
 
         doAsync {
             val signUpResponse = client.signUp(
                 SignUpDetails(
                     email, password, company,
-                    designationSpinner.selectedItemPosition + 1, designation, isAdmin
+                    designationSpinner.selectedItemPosition + 1, designation
                 )
             ).execute()
 
             uiThread {
                 if (signUpResponse.isSuccessful) {
-                    finish()
+                    findNavController().navigateUp()
                 }
 
-                toast(Miscellaneous.extractErrorMessage(signUpResponse.errorBody()?.string()))
+                context?.toast(Miscellaneous.extractErrorMessage(signUpResponse.errorBody()?.string()))
             }
         }
     }

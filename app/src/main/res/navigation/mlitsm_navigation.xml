@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mlitsm_navigation"
+    app:startDestination="@id/login_dest">
+
+    <fragment
+        android:id="@+id/login_dest"
+        android:name="com.hmproductions.itsmclient.fragment.LoginFragment"
+        android:label="@string/login"
+        tools:layout="@layout/fragment_login">
+
+        <action
+            android:id="@+id/action_successful_normal_login"
+            app:destination="@+id/home_dest"
+            app:popUpTo="@id/login_dest"
+            app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/action_successful_admin_login"
+            app:destination="@+id/admin_dest"
+            app:popUpTo="@id/login_dest"
+            app:popUpToInclusive="true" />
+
+        <action
+            android:id="@+id/action_signup"
+            app:destination="@+id/signup_dest" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/home_dest"
+        android:name="com.hmproductions.itsmclient.fragment.HomeFragment"
+        android:label="@string/home"
+        tools:layout="@layout/fragment_home">
+
+        <action
+            android:id="@+id/action_logout"
+            app:destination="@+id/login_dest"
+            app:popUpTo="@id/home_dest"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/admin_dest"
+        android:name="com.hmproductions.itsmclient.fragment.AdminFragment"
+        android:label="@string/admin"
+        tools:layout="@layout/fragment_admin">
+
+        <action
+            android:id="@+id/action_logout"
+            app:destination="@+id/login_dest"
+            app:popUpTo="@id/home_dest"
+            app:popUpToInclusive="true" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/signup_dest"
+        android:name="com.hmproductions.itsmclient.fragment.SignUpFragment"
+        android:label="@string/signup"
+        tools:layout="@layout/fragment_signup" />
+
+
+</navigation>

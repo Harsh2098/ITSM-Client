@@ -2,7 +2,7 @@
     <string name="app_name">ITSM Client</string>
     <string name="password">Password</string>
     <string name="don_t_have_account_sign_up">Don\'t have account? Sign Up</string>
-    <string name="login">LOGIN</string>
+    <string name="login">Login</string>
     <string name="email">Email</string>
     <string name="valid_email_error_text">Enter an valid email ID</string>
     <string name="valid_password_error_text">Min length: 8</string>
@@ -10,6 +10,11 @@
     <string name="company">Company</string>
     <string name="confirm_password">Confirm Password</string>
     <string name="passwords_dont_match">Passwords don\'t match</string>
+    <string name="company_logo">company logo</string>
+    <string name="home">Home</string>
+    <string name="Welcome">Welcome</string>
+    <string name="admin">Admin</string>
+    <string name="signup">Sign Up</string>
 
     <string-array name="designations">
         <item>Vice President</item>
