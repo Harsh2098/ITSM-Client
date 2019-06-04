@@ -1,9 +1,6 @@
 package com.hmproductions.itsmclient
 
-import com.hmproductions.itsmclient.data.LoginDetails
-import com.hmproductions.itsmclient.data.LoginResponse
-import com.hmproductions.itsmclient.data.SignUpDetails
-import com.hmproductions.itsmclient.data.TicketResponse
+import com.hmproductions.itsmclient.data.*
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -19,4 +16,10 @@ interface ITSMClient {
 
     @GET("core/data")
     fun getTickets(@Header("Authorization") authorization: String): Call<TicketResponse>
+
+    @GET("config")
+    fun getConfigurations(@Header("Authorization") authorization: String): Call<ConfigurationResponse>
+
+    @GET("config/available")
+    fun getAvailableFields(@Header("Authorization") authorization: String): Call<FieldResponse>
 }

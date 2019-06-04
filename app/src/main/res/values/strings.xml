@@ -15,6 +15,9 @@
     <string name="Welcome">Welcome</string>
     <string name="admin">Admin</string>
     <string name="signup">Sign Up</string>
+    <string name="select_tier">Select Tier</string>
+    <string name="add_configuration">Add configuration</string>
+    <string name="set_configuration">Set Configuration</string>
 
     <string-array name="designations">
         <item>Vice President</item>

@@ -37,7 +37,7 @@ class MainActivity : AppCompatActivity() {
 
         when (item.itemId) {
             android.R.id.home -> {
-                mainDrawerLayout!!.openDrawer(GravityCompat.START)  // OPEN DRAWER
+                mainDrawerLayout?.openDrawer(GravityCompat.START)  // OPEN DRAWER
                 return true
             }
         }

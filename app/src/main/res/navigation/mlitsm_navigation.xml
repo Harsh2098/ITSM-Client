@@ -55,13 +55,22 @@
             app:popUpTo="@id/home_dest"
             app:popUpToInclusive="true" />
 
+        <action
+            android:id="@+id/action_new_configuration"
+            app:destination="@+id/configuration_dest" />
+
     </fragment>
+
+    <fragment
+        android:id="@+id/configuration_dest"
+        android:name="com.hmproductions.itsmclient.fragment.ConfigurationFragment"
+        android:label="@string/add_configuration"
+        tools:layout="@layout/fragment_configuration" />
 
     <fragment
         android:id="@+id/signup_dest"
         android:name="com.hmproductions.itsmclient.fragment.SignUpFragment"
         android:label="@string/signup"
         tools:layout="@layout/fragment_signup" />
-
 
 </navigation>
