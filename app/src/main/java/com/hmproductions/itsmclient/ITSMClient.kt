@@ -8,11 +8,11 @@ interface ITSMClient {
 
     @Headers("Content-Type:application/json")
     @POST("user/login")
-    fun login(@Body loginDetails: LoginDetails): Call<LoginResponse>
+    fun login(@Body loginDetails: LoginDetails): Call<GenericResponse>
 
     @Headers("Content-Type:application/json")
     @POST("user/signup")
-    fun signUp(@Body signUpDetails: SignUpDetails): Call<LoginResponse>
+    fun signUp(@Body signUpDetails: SignUpDetails): Call<GenericResponse>
 
     @GET("core/data")
     fun getTickets(@Header("Authorization") authorization: String): Call<TicketResponse>
@@ -22,4 +22,7 @@ interface ITSMClient {
 
     @GET("config/available")
     fun getAvailableFields(@Header("Authorization") authorization: String): Call<FieldResponse>
+
+    @POST("config")
+    fun setConfiguration(@Header("Authorization") authorization: String, @Body configurationRequest: ConfigurationRequest): Call<GenericResponse>
 }

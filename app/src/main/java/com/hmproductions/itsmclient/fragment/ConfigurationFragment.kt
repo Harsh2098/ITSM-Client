@@ -5,14 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hmproductions.itsmclient.ITSMClient
 import com.hmproductions.itsmclient.R
 import com.hmproductions.itsmclient.adapter.FieldRecyclerAdapter
 import com.hmproductions.itsmclient.dagger.DaggerITSMApplicationComponent
+import com.hmproductions.itsmclient.data.ConfigurationRequest
 import com.hmproductions.itsmclient.utils.Constants.USER_TOKEN
 import com.hmproductions.itsmclient.utils.Miscellaneous
-import kotlinx.android.synthetic.main.fragment_configuration.*
+import kotlinx.android.synthetic.main.fragment_field.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
@@ -26,7 +28,7 @@ class ConfigurationFragment : Fragment() {
     private lateinit var fieldAdapter: FieldRecyclerAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_configuration, container, false)
+        return inflater.inflate(R.layout.fragment_field, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -47,6 +49,8 @@ class ConfigurationFragment : Fragment() {
         }
 
         getAllConfigurationsAsync()
+
+        setConfigButton.setOnClickListener { sendNewConfiguration() }
     }
 
     private fun getAllConfigurationsAsync() {
@@ -59,6 +63,33 @@ class ConfigurationFragment : Fragment() {
                     if (fieldList.isNotEmpty()) fieldAdapter.swapData(fieldList)
                 } else {
                     context?.toast(Miscellaneous.extractErrorMessage(fieldResponse.errorBody()?.string()))
+                }
+            }
+        }
+    }
+
+    private fun sendNewConfiguration() {
+        val updatedList = fieldAdapter.updatedList
+        val customList = mutableListOf<String>()
+
+        for (item in updatedList) {
+            if (item.checked) customList.add(item.field)
+        }
+
+        if (customList.size < 1) {
+            context?.toast("Check at least 1 item")
+            return
+        }
+
+        doAsync {
+            val createConfigResponse =
+                client.setConfiguration(USER_TOKEN, ConfigurationRequest(tierPicker.value, customList)).execute()
+
+            uiThread {
+                if (createConfigResponse.isSuccessful) {
+                    findNavController().navigateUp()
+                } else {
+                    context?.toast(Miscellaneous.extractErrorMessage(createConfigResponse.errorBody()?.string()))
                 }
             }
         }

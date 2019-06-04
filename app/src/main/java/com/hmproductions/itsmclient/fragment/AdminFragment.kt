@@ -39,8 +39,6 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
         configurationsRecyclerView.adapter = configurationAdapter
         configurationsRecyclerView.setHasFixedSize(true)
 
-        getAllConfigurationsAsync()
-
         addConfigurationFab.setOnClickListener { findNavController().navigate(R.id.action_new_configuration) }
     }
 
@@ -50,10 +48,11 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
 
             uiThread {
                 if (configurationResponse.isSuccessful) {
-                    val configurationList = configurationResponse.body()?.result?.configurations?: mutableListOf()
-                    if (configurationList.isNotEmpty())
+                    var configurationList = configurationResponse.body()?.result?.configurations ?: mutableListOf()
+                    if (configurationList.isNotEmpty()) {
+                        configurationList = configurationList.sortedWith(compareBy { it.tier })
                         configurationAdapter.swapData(configurationList)
-
+                    }
                     flipVisibility(configurationList.isNotEmpty())
                 } else {
                     context?.toast(Miscellaneous.extractErrorMessage(configurationResponse.errorBody()?.string()))
@@ -68,5 +67,10 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
 
     override fun onConfigurationClick(position: Int) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getAllConfigurationsAsync()
     }
 }

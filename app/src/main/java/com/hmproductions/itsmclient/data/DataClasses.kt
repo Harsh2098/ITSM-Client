@@ -14,7 +14,7 @@ data class LoginDetails(val email: String, val password: String)
 
 data class SignUpDetails(val email: String, val password: String, val company: String, val tier: Int, val designation: String)
 
-data class LoginResponse(val statusCode: Int, val message: String, val token: String, val isAdmin: Boolean)
+data class GenericResponse(val statusCode: Int, val message: String, val token: String, val isAdmin: Boolean)
 
 // Configuration data classes
 data class ConfigurationResponse(val result: ConfigurationResult)
@@ -27,6 +27,8 @@ data class Configuration(val tier: Int, val fields: List<String>)
 data class FieldResponse(val configuration: List<ConfigurationField>)
 
 data class ConfigurationField(val field: String, var checked: Boolean = false)
+
+data class ConfigurationRequest(val tier: Int, val fields: List<String>)
 
 // Generic data classes
 data class ErrorMessage(val statusCode: Int, val message: String)

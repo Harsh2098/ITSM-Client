@@ -8,16 +8,15 @@
         android:id="@+id/tierText"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
         android:gravity="center"
         android:text="@string/select_tier"
         android:textColor="@color/neutral_color"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="@+id/tierPicker"
+        app:layout_constraintBottom_toBottomOf="@+id/setConfigButton"
         app:layout_constraintEnd_toStartOf="@+id/tierPicker"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tierPicker" />
+        app:layout_constraintTop_toTopOf="@+id/setConfigButton" />
 
     <NumberPicker
         android:id="@+id/tierPicker"
@@ -34,12 +33,11 @@
         android:id="@+id/setConfigButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:text="@string/set_configuration"
         app:layout_constraintBottom_toBottomOf="@+id/tierPicker"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tierPicker"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/tierPicker" />
 
     <View
         android:id="@+id/mainDivider"

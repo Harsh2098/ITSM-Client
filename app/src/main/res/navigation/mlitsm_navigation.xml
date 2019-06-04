@@ -65,7 +65,7 @@
         android:id="@+id/configuration_dest"
         android:name="com.hmproductions.itsmclient.fragment.ConfigurationFragment"
         android:label="@string/add_configuration"
-        tools:layout="@layout/fragment_configuration" />
+        tools:layout="@layout/fragment_field" />
 
     <fragment
         android:id="@+id/signup_dest"
