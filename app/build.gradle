@@ -51,9 +51,8 @@ dependencies {
     // Gson
     implementation 'com.google.code.gson:gson:2.8.5'
 
-    // Room persistence library
-    implementation "androidx.room:room-runtime:2.1.0-rc01"
-    kapt "androidx.room:room-compiler:2.1.0-beta01"
+    // Graphs & charts
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     // Retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.5.0'

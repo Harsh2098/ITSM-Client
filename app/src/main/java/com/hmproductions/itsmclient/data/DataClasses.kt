@@ -30,5 +30,8 @@ data class ConfigurationField(val field: String, var checked: Boolean = false)
 
 data class ConfigurationRequest(val tier: Int, val fields: List<String>)
 
+// Normal user core data classes
+data class CoreData(val fieldName: String, val stringValues: MutableList<String>, val intValues: MutableList<Int>)
+
 // Generic data classes
 data class ErrorMessage(val statusCode: Int, val message: String)

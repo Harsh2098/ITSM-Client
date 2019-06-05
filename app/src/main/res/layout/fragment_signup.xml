@@ -51,7 +51,7 @@
             android:layout_height="match_parent"
             android:ems="10"
             android:inputType="textPassword"
-            android:text="abcd1234"
+            android:text="test1234"
             android:textColor="@color/neutral_color"
             android:textSize="18sp" />
 
@@ -75,7 +75,7 @@
             android:layout_height="match_parent"
             android:ems="10"
             android:inputType="textPassword"
-            android:text="abcd1234"
+            android:text="test1234"
             android:textColor="@color/neutral_color"
             android:textSize="18sp" />
 

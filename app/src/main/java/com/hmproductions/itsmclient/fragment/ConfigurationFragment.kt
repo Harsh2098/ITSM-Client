@@ -59,8 +59,11 @@ class ConfigurationFragment : Fragment() {
 
             uiThread {
                 if (fieldResponse.isSuccessful) {
-                    val fieldList = fieldResponse.body()?.configuration ?: mutableListOf()
-                    if (fieldList.isNotEmpty()) fieldAdapter.swapData(fieldList)
+                    var fieldList = fieldResponse.body()?.configuration ?: mutableListOf()
+                    if (fieldList.isNotEmpty()) {
+                        fieldList = fieldList.sortedWith(compareBy({it.field}))
+                        fieldAdapter.swapData(fieldList)
+                    }
                 } else {
                     context?.toast(Miscellaneous.extractErrorMessage(fieldResponse.errorBody()?.string()))
                 }

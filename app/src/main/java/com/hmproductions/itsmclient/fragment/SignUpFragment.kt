@@ -77,10 +77,10 @@ class SignUpFragment : Fragment() {
 
             uiThread {
                 if (signUpResponse.isSuccessful) {
+                    context?.toast(signUpResponse.body()?.message ?: "Registration success")
                     findNavController().navigateUp()
-                }
-
-                context?.toast(Miscellaneous.extractErrorMessage(signUpResponse.errorBody()?.string()))
+                } else
+                    context?.toast(Miscellaneous.extractErrorMessage(signUpResponse.errorBody()?.string()))
             }
         }
     }
