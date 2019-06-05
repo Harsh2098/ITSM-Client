@@ -16,7 +16,9 @@ import com.hmproductions.itsmclient.data.CoreData
 import com.hmproductions.itsmclient.utils.Constants.USER_TOKEN
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
+import org.json.JSONException
 import org.json.JSONObject
 import javax.inject.Inject
 
@@ -74,12 +76,14 @@ class HomeFragment : Fragment() {
                 val fieldArray = currentField.getJSONArray(key);
 
                 for(j in 0 until fieldArray.length()) {
-                    val tempString = fieldArray.getJSONObject(j).getString("value")
-
                     try {
+                        val tempString = fieldArray.getJSONObject(j).getString("value")
                         newCoreData.intValues.add(tempString.toInt())
                     } catch (e: NumberFormatException) {
+                        val tempString = fieldArray.getJSONObject(j).getString("value")
                         newCoreData.stringValues.add(tempString.toLowerCase())
+                    } catch (e: JSONException) {
+                        context?.toast("Cannot plot graph for $key")
                     }
                 }
 

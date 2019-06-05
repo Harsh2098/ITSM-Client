@@ -130,6 +130,7 @@ public class GraphRecyclerAdapter extends RecyclerView.Adapter<GraphRecyclerAdap
         @Override
         public String getFormattedValue(float value) {
             String str = labelMap.get((int) value);
+            if (str == null) return "Graph";
             return str.substring(0, 1).toUpperCase() + str.substring(1);
         }
     }
