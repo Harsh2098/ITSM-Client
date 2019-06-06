@@ -40,7 +40,7 @@ public class GraphRecyclerAdapter extends RecyclerView.Adapter<GraphRecyclerAdap
     public void onBindViewHolder(@NonNull GraphViewHolder holder, int position) {
         CoreData currentData = list.get(position);
 
-        holder.fieldNameTextView.setText(currentData.getFieldName());
+        holder.fieldNameTextView.setText(currentData.getFieldName().replace('_', ' '));
 
         List<BarEntry> entries = new ArrayList<>();
         HashMap<Integer, String> labelMap = new HashMap<>();

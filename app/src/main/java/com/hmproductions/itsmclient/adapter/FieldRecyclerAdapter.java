@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.hmproductions.itsmclient.R;
@@ -35,6 +36,7 @@ public class FieldRecyclerAdapter extends RecyclerView.Adapter<FieldRecyclerAdap
         ConfigurationField currentField = list.get(position);
         holder.fieldCheckbox.setChecked(currentField.getChecked());
         holder.fieldCheckbox.setText(currentField.getField());
+        holder.inferredTypeTextView.setText(currentField.getInferredType());
     }
 
     @Override
@@ -55,10 +57,12 @@ public class FieldRecyclerAdapter extends RecyclerView.Adapter<FieldRecyclerAdap
     class FieldViewHolder extends RecyclerView.ViewHolder {
 
         CheckBox fieldCheckbox;
+        TextView inferredTypeTextView;
 
         FieldViewHolder(@NonNull View itemView) {
             super(itemView);
             fieldCheckbox = itemView.findViewById(R.id.fieldCheckbox);
+            inferredTypeTextView = itemView.findViewById(R.id.inferredTypeTextView);
 
             fieldCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override

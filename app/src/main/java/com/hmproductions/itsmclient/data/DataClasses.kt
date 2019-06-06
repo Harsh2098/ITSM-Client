@@ -26,7 +26,7 @@ data class Configuration(val tier: Int, val fields: List<String>)
 /// Field data classes
 data class FieldResponse(val configuration: List<ConfigurationField>)
 
-data class ConfigurationField(val field: String, var checked: Boolean = false)
+data class ConfigurationField(val field: String, val inferredType: String, var checked: Boolean = false)
 
 data class ConfigurationRequest(val tier: Int, val fields: List<String>)
 
