@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
-import androidx.recyclerview.widget.SnapHelper
 import com.hmproductions.itsmclient.ITSMClient
 import com.hmproductions.itsmclient.R
 import com.hmproductions.itsmclient.adapter.GraphRecyclerAdapter
@@ -54,7 +53,13 @@ class HomeFragment : Fragment() {
 
             uiThread {
                 val data = extractFieldsFromJson(coreDataResponse.body()?.string() ?: "")
-                graphRecyclerAdapter.swapData(data)
+
+                if (data.isEmpty()) {
+                    flipVisibilities(false)
+                } else {
+                    flipVisibilities(true)
+                    graphRecyclerAdapter.swapData(data)
+                }
             }
         }
     }
@@ -62,35 +67,40 @@ class HomeFragment : Fragment() {
     private fun extractFieldsFromJson(jsonString: String): List<CoreData> {
 
         val answer = mutableListOf<CoreData>()
+        try {
+            val root = JSONObject(jsonString)
+            val globalTickets = root.getJSONArray("globalTickets")
 
-        val root = JSONObject(jsonString)
-        val globalTickets = root.getJSONArray("globalTickets");
+            for (i in 0 until globalTickets.length()) {
+                val currentField = globalTickets.getJSONObject(i)
+                val iterator = currentField.keys()
 
-        for (i in 0 until globalTickets.length()) {
-            val currentField = globalTickets.getJSONObject(i)
-            val iterator = currentField.keys()
+                while (iterator.hasNext()) {
+                    val key = iterator.next()
+                    val newCoreData = CoreData(key, mutableListOf(), mutableListOf())
+                    val fieldArray = currentField.getJSONArray(key)
 
-            while(iterator.hasNext()) {
-                val key = iterator.next()
-                val newCoreData = CoreData(key, mutableListOf(), mutableListOf())
-                val fieldArray = currentField.getJSONArray(key);
-
-                for(j in 0 until fieldArray.length()) {
-                    try {
-                        val tempString = fieldArray.getJSONObject(j).getString("value")
-                        newCoreData.intValues.add(tempString.toInt())
-                    } catch (e: NumberFormatException) {
-                        val tempString = fieldArray.getJSONObject(j).getString("value")
-                        newCoreData.stringValues.add(tempString.toLowerCase())
-                    } catch (e: JSONException) {
-                        context?.toast("Cannot plot graph for $key")
+                    for (j in 0 until fieldArray.length()) {
+                        try {
+                            val tempString = fieldArray.getJSONObject(j).getString("value")
+                            newCoreData.intValues.add(tempString.toInt())
+                        } catch (e: NumberFormatException) {
+                            val tempString = fieldArray.getJSONObject(j).getString("value")
+                            newCoreData.stringValues.add(tempString.toLowerCase())
+                        }
                     }
+
+                    answer.add(newCoreData)
                 }
-
-                answer.add(newCoreData)
             }
+        } catch (e: JSONException) {
+            context?.toast("Response from server")
         }
-
         return answer
+    }
+
+    private fun flipVisibilities(dataPresent: Boolean = false) {
+        noDataTextView.visibility = if (dataPresent) View.GONE else View.VISIBLE
+        graphsRecyclerView.visibility = if (dataPresent) View.VISIBLE else View.GONE
     }
 }

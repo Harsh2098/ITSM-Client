@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/company_logo"
-        android:src="@mipmap/ml_logo"
+        android:src="@mipmap/ml_banner"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:ems="12"
             android:inputType="textEmailAddress"
-            android:text="admin_harsh@test.com"
+            android:text="intern@test.com"
             android:textColor="@color/neutral_color"
             android:textSize="16sp" />
 
