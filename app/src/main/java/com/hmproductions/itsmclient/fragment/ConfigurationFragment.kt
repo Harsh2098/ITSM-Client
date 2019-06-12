@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.hmproductions.itsmclient.ITSMClient
@@ -12,7 +13,8 @@ import com.hmproductions.itsmclient.R
 import com.hmproductions.itsmclient.adapter.FieldRecyclerAdapter
 import com.hmproductions.itsmclient.dagger.DaggerITSMApplicationComponent
 import com.hmproductions.itsmclient.data.ConfigurationRequest
-import com.hmproductions.itsmclient.utils.Constants.USER_TOKEN
+import com.hmproductions.itsmclient.data.ITSMViewModel
+import com.hmproductions.itsmclient.utils.Constants
 import com.hmproductions.itsmclient.utils.Miscellaneous
 import kotlinx.android.synthetic.main.fragment_field.*
 import org.jetbrains.anko.doAsync
@@ -26,6 +28,7 @@ class ConfigurationFragment : Fragment() {
     lateinit var client: ITSMClient
 
     private lateinit var fieldAdapter: FieldRecyclerAdapter
+    private lateinit var model: ITSMViewModel
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_field, container, false)
@@ -34,6 +37,9 @@ class ConfigurationFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         DaggerITSMApplicationComponent.builder().build().inject(this)
+
+        model = activity?.run { ViewModelProviders.of(this).get(ITSMViewModel::class.java) }
+            ?: throw Exception("Invalid activity")
 
         fieldAdapter = FieldRecyclerAdapter(context, null)
         fieldsRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -55,13 +61,21 @@ class ConfigurationFragment : Fragment() {
 
     private fun getAllConfigurationsAsync() {
         doAsync {
-            val fieldResponse = client.getAvailableFields(USER_TOKEN).execute()
+            val fieldResponse = client.getAvailableFields(model.token).execute()
 
             uiThread {
                 if (fieldResponse.isSuccessful) {
                     var fieldList = fieldResponse.body()?.configuration ?: mutableListOf()
                     if (fieldList.isNotEmpty()) {
-                        fieldList = fieldList.sortedWith(compareBy({it.field}))
+                        fieldList = fieldList.sortedWith(compareBy { it.field })
+
+                        val incomingList = arguments?.getStringArrayList(Constants.ALREADY_SELECTED_KEY)
+                        if (incomingList != null) {
+                            for (item in incomingList) {
+                                fieldList.find { it.field == item }?.checked = true
+                            }
+                        }
+
                         fieldAdapter.swapData(fieldList)
                     }
                 } else {
@@ -86,7 +100,7 @@ class ConfigurationFragment : Fragment() {
 
         doAsync {
             val createConfigResponse =
-                client.setConfiguration(USER_TOKEN, ConfigurationRequest(tierPicker.value, customList)).execute()
+                client.setConfiguration(model.token, ConfigurationRequest(tierPicker.value, customList)).execute()
 
             uiThread {
                 if (createConfigResponse.isSuccessful) {

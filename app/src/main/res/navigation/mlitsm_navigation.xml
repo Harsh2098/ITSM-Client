@@ -41,7 +41,17 @@
             app:popUpTo="@id/home_dest"
             app:popUpToInclusive="true" />
 
+        <action
+            android:id="@+id/action_report"
+            app:destination="@+id/report_dest" />
+
     </fragment>
+
+    <fragment
+        android:id="@+id/report_dest"
+        android:name="com.hmproductions.itsmclient.fragment.ReportFragment"
+        android:label="@string/report"
+        tools:layout="@layout/fragment_report" />
 
     <fragment
         android:id="@+id/admin_dest"

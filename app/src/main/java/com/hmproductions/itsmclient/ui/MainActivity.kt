@@ -5,19 +5,25 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.hmproductions.itsmclient.R
+import com.hmproductions.itsmclient.data.ITSMViewModel
 import com.hmproductions.itsmclient.utils.hideKeyboard
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.contentView
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var model: ITSMViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         title = getString(R.string.app_name)
+
+        model = ViewModelProviders.of(this).get(ITSMViewModel::class.java)
 
         setSupportActionBar(mainToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)

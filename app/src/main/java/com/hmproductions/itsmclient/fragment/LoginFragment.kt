@@ -6,12 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.hmproductions.itsmclient.ITSMClient
 import com.hmproductions.itsmclient.R
 import com.hmproductions.itsmclient.dagger.DaggerITSMApplicationComponent
+import com.hmproductions.itsmclient.data.ITSMViewModel
 import com.hmproductions.itsmclient.data.LoginDetails
-import com.hmproductions.itsmclient.utils.Constants
 import com.hmproductions.itsmclient.utils.Miscellaneous
 import kotlinx.android.synthetic.main.fragment_login.*
 import org.jetbrains.anko.doAsync
@@ -24,6 +25,8 @@ class LoginFragment : Fragment() {
     @Inject
     lateinit var client: ITSMClient
 
+    private lateinit var model: ITSMViewModel
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_login, container, false)
     }
@@ -31,6 +34,9 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         DaggerITSMApplicationComponent.builder().build().inject(this)
+
+        model = activity?.run { ViewModelProviders.of(this).get(ITSMViewModel::class.java) }
+            ?: throw Exception("Invalid activity")
 
         loginButton.setOnClickListener { setupLoginButton() }
         signUpTextView.setOnClickListener { setupSignUpText() }
@@ -55,7 +61,7 @@ class LoginFragment : Fragment() {
 
             uiThread {
                 if (loginResponse.isSuccessful) {
-                    Constants.USER_TOKEN = loginResponse.body()?.token
+                    model.token = loginResponse.body()?.token ?: ""
                     if (loginResponse.body()?.isAdmin == true)
                         findNavController().navigate(R.id.action_successful_admin_login)
                     else

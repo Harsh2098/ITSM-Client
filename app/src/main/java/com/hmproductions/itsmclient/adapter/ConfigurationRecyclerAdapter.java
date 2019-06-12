@@ -19,7 +19,7 @@ public class ConfigurationRecyclerAdapter extends RecyclerView.Adapter<Configura
     private OnConfigurationClickListener listener;
 
     public interface OnConfigurationClickListener {
-        void onConfigurationClick(int position);
+        void onConfigurationClick(int tier);
     }
 
     public ConfigurationRecyclerAdapter(Context context, List<Configuration> list, OnConfigurationClickListener listener) {
@@ -74,7 +74,7 @@ public class ConfigurationRecyclerAdapter extends RecyclerView.Adapter<Configura
 
         @Override
         public void onClick(View v) {
-            listener.onConfigurationClick(getAdapterPosition());
+            listener.onConfigurationClick(list.get(getAdapterPosition()).getTier());
         }
     }
 }
