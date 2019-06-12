@@ -15,6 +15,7 @@ import com.hmproductions.itsmclient.adapter.GraphRecyclerAdapter
 import com.hmproductions.itsmclient.dagger.DaggerITSMApplicationComponent
 import com.hmproductions.itsmclient.data.CoreData
 import com.hmproductions.itsmclient.data.ITSMViewModel
+import com.hmproductions.itsmclient.utils.Constants
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
@@ -51,8 +52,6 @@ class HomeFragment : Fragment() {
         snapHelper.attachToRecyclerView(graphsRecyclerView)
 
         getCoreData()
-
-        intelligentReportButton.setOnClickListener { findNavController().navigate(R.id.action_report) }
     }
 
     private fun getCoreData() {
@@ -68,11 +67,15 @@ class HomeFragment : Fragment() {
                     flipVisibilities(true)
                     graphRecyclerAdapter.swapData(data)
                 }
+
+                val bundle = Bundle()
+                bundle.putParcelableArrayList(Constants.CORE_DATA_KEY, data)
+                intelligentReportButton.setOnClickListener { findNavController().navigate(R.id.action_report, bundle) }
             }
         }
     }
 
-    private fun extractFieldsFromJson(jsonString: String): List<CoreData> {
+    private fun extractFieldsFromJson(jsonString: String): ArrayList<CoreData> {
 
         val answer = mutableListOf<CoreData>()
         try {
@@ -109,7 +112,7 @@ class HomeFragment : Fragment() {
         } catch (e: JSONException) {
             context?.toast("Error parsing some fields")
         }
-        return answer
+        return answer as ArrayList<CoreData>
     }
 
     private fun flipVisibilities(dataPresent: Boolean = false) {

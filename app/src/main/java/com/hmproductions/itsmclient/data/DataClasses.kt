@@ -1,5 +1,8 @@
 package com.hmproductions.itsmclient.data
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
 // Tickets data classes
 data class TicketResponse(val ticketsResult: TicketsResult)
 
@@ -31,7 +34,8 @@ data class ConfigurationField(val field: String, val inferredType: String, var c
 data class ConfigurationRequest(val tier: Int, val fields: List<String>)
 
 // Normal user core data classes
-data class CoreData(val fieldName: String, val stringValues: MutableList<String>, val intValues: MutableList<Int>)
+@Parcelize
+data class CoreData(val fieldName: String, val stringValues: MutableList<String>, val intValues: MutableList<Int>) : Parcelable
 
 // Generic data classes
 data class ErrorMessage(val statusCode: Int, val message: String)
