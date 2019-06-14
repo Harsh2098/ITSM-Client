@@ -19,7 +19,9 @@ class ReportFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         coreData = arguments?.getParcelableArrayList(Constants.CORE_DATA_KEY)
             ?: mutableListOf<CoreData>() as ArrayList<CoreData>
+
     }
 }

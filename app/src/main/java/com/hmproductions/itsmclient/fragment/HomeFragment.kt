@@ -66,12 +66,17 @@ class HomeFragment : Fragment() {
                 } else {
                     flipVisibilities(true)
                     graphRecyclerAdapter.swapData(data)
+                    setupFab()
                 }
-
-                val bundle = Bundle()
-                bundle.putParcelableArrayList(Constants.CORE_DATA_KEY, data)
-                intelligentReportButton.setOnClickListener { findNavController().navigate(R.id.action_report, bundle) }
             }
+        }
+    }
+
+    private fun setupFab() {
+        intelligentReportButton.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putParcelableArrayList(Constants.CORE_DATA_KEY, graphRecyclerAdapter.topCoreData)
+            findNavController().navigate(R.id.action_report, bundle)
         }
     }
 
@@ -103,7 +108,7 @@ class HomeFragment : Fragment() {
                         }
                     }
 
-                    if(newCoreData.stringValues.size == 0 && newCoreData.intValues.size == 0)
+                    if (newCoreData.stringValues.size == 0 && newCoreData.intValues.size == 0)
                         continue
 
                     answer.add(newCoreData)

@@ -15,6 +15,7 @@ import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.hmproductions.itsmclient.R;
 import com.hmproductions.itsmclient.data.CoreData;
+import com.hmproductions.itsmclient.data.GraphRank;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,9 +24,9 @@ import java.util.List;
 public class GraphRecyclerAdapter extends RecyclerView.Adapter<GraphRecyclerAdapter.GraphViewHolder> {
 
     private Context context;
-    private List<CoreData> list;
+    private ArrayList<CoreData> list;
 
-    public GraphRecyclerAdapter(Context context, List<CoreData> list) {
+    public GraphRecyclerAdapter(Context context, ArrayList<CoreData> list) {
         this.context = context;
         this.list = list;
     }
@@ -94,6 +95,12 @@ public class GraphRecyclerAdapter extends RecyclerView.Adapter<GraphRecyclerAdap
 
         holder.barChart.invalidate();
         holder.barChart.animateY(500);
+
+        if(holder.barChart.getXAxis().getLabelCount() > 2 && holder.barChart.getXAxis().getLabelCount() < 8) {
+            currentData.setRanking(GraphRank.TOP);
+        } else if(holder.barChart.getXAxis().getLabelCount() > 12 || holder.barChart.getXAxis().getLabelCount() < 2) {
+            currentData.setRanking(GraphRank.USELESS);
+        }
     }
 
     @Override
@@ -102,9 +109,18 @@ public class GraphRecyclerAdapter extends RecyclerView.Adapter<GraphRecyclerAdap
         return list.size();
     }
 
-    public void swapData(List<CoreData> newList) {
+    public void swapData(ArrayList<CoreData> newList) {
         list = newList;
         notifyDataSetChanged();
+    }
+
+    public ArrayList<CoreData> getTopCoreData() {
+        ArrayList<CoreData> customList = new ArrayList<>();
+        for(CoreData coreData : list) {
+            if(coreData.getRanking() == GraphRank.TOP)
+                customList.add(coreData);
+        }
+        return customList;
     }
 
     class GraphViewHolder extends RecyclerView.ViewHolder {
@@ -130,7 +146,7 @@ public class GraphRecyclerAdapter extends RecyclerView.Adapter<GraphRecyclerAdap
         @Override
         public String getFormattedValue(float value) {
             String str = labelMap.get((int) value);
-            if (str == null) return "Graph";
+            if (str == null) return String.valueOf((int) value);
             return str.substring(0, 1).toUpperCase() + str.substring(1);
         }
     }

@@ -35,7 +35,9 @@ data class ConfigurationRequest(val tier: Int, val fields: List<String>)
 
 // Normal user core data classes
 @Parcelize
-data class CoreData(val fieldName: String, val stringValues: MutableList<String>, val intValues: MutableList<Int>) : Parcelable
+data class CoreData(val fieldName: String, val stringValues: MutableList<String>, val intValues: MutableList<Int>, var ranking: GraphRank = GraphRank.MIDDLE) : Parcelable
+
+enum class GraphRank { TOP, MIDDLE, USELESS }
 
 // Generic data classes
 data class ErrorMessage(val statusCode: Int, val message: String)
