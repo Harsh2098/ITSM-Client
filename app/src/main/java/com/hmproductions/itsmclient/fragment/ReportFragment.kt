@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.hmproductions.itsmclient.R
 import com.hmproductions.itsmclient.data.CoreData
 import com.hmproductions.itsmclient.utils.Constants
@@ -23,5 +24,6 @@ class ReportFragment : Fragment() {
         coreData = arguments?.getParcelableArrayList(Constants.CORE_DATA_KEY)
             ?: mutableListOf<CoreData>() as ArrayList<CoreData>
 
+        if(coreData.size < 1) findNavController().navigateUp()
     }
 }

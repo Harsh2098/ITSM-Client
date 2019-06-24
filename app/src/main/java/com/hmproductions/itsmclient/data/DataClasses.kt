@@ -4,10 +4,6 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 // Tickets data classes
-data class TicketResponse(val ticketsResult: TicketsResult)
-
-data class TicketsResult(val count: Int, val tickets: List<Ticket>)
-
 data class Ticket(val sysId: String, val number: String, val short_description: String, val description: String, val priority: Int,
                   val state: Int, val severity: Int, val category: String, val createdOn: Long, val active: Boolean,
                   val sysModeCount: Int, val companyId: String)
