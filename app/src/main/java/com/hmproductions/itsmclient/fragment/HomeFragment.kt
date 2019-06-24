@@ -16,6 +16,8 @@ import com.hmproductions.itsmclient.dagger.DaggerITSMApplicationComponent
 import com.hmproductions.itsmclient.data.CoreData
 import com.hmproductions.itsmclient.data.ITSMViewModel
 import com.hmproductions.itsmclient.utils.Constants
+import com.hmproductions.itsmclient.utils.Miscellaneous
+import com.hmproductions.itsmclient.utils.Miscellaneous.getPriorityFromString
 import kotlinx.android.synthetic.main.fragment_home.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
@@ -59,6 +61,12 @@ class HomeFragment : Fragment() {
             val coreDataResponse = client.getCoreData(model.token).execute()
 
             uiThread {
+                if(!coreDataResponse.isSuccessful) {
+                    context?.toast(Miscellaneous.extractErrorMessage(coreDataResponse.errorBody()?.string()))
+                    flipVisibilities(false)
+                    return@uiThread
+                }
+
                 val data = extractFieldsFromJson(coreDataResponse.body()?.string() ?: "")
 
                 if (data.isEmpty()) {
@@ -88,15 +96,16 @@ class HomeFragment : Fragment() {
 
                 while (iterator.hasNext()) {
                     val key = iterator.next()
-                    val newCoreData = CoreData(key, mutableListOf(), mutableListOf())
-                    val fieldArray = currentField.getJSONArray(key)
+                    val fieldObject = currentField.getJSONObject(key)
+                    val valuesArray = fieldObject.getJSONArray("values")
+                    val newCoreData = CoreData(key, mutableListOf(), mutableListOf(), getPriorityFromString(fieldObject.getString("rank")))
 
-                    for (j in 0 until fieldArray.length()) {
+                    for (j in 0 until fieldObject.length()) {
                         try {
-                            val tempString = fieldArray.getJSONObject(j).getString("value")
+                            val tempString = valuesArray.getJSONObject(j).getString("value")
                             newCoreData.intValues.add(tempString.toInt())
                         } catch (e: NumberFormatException) {
-                            val tempString = fieldArray.getJSONObject(j).getString("value")
+                            val tempString = valuesArray.getJSONObject(j).getString("value")
                             newCoreData.stringValues.add(tempString.toLowerCase())
                         } catch (e: JSONException) {
                             context?.toast("Error parsing some fields")
