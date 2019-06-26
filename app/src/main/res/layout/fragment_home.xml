@@ -37,8 +37,8 @@
         android:layout_margin="4dp"
         android:src="@drawable/report_icon"
         app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:maxImageSize="36dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

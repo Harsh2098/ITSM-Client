@@ -45,7 +45,17 @@
             android:id="@+id/action_report"
             app:destination="@+id/report_dest" />
 
+        <action
+            android:id="@+id/action_profile"
+            app:destination="@+id/profile_dest" />
+
     </fragment>
+
+    <fragment
+        android:id="@+id/profile_dest"
+        android:name="com.hmproductions.itsmclient.fragment.ProfileFragment"
+        android:label="@string/profile"
+        tools:layout="@layout/fragment_profile" />
 
     <fragment
         android:id="@+id/report_dest"

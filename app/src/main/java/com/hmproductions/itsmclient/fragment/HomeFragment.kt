@@ -96,6 +96,10 @@ class HomeFragment : Fragment() {
             R.id.action_logout -> {
                 findNavController().navigateUp()
             }
+
+            R.id.action_profile -> {
+                findNavController().navigate(R.id.action_profile)
+            }
         }
         return super.onOptionsItemSelected(item)
     }

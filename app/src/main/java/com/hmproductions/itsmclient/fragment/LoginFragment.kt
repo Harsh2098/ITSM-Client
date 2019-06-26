@@ -64,6 +64,9 @@ class LoginFragment : Fragment() {
             uiThread {
                 if (loginResponse.isSuccessful) {
                     model.token = loginResponse.body()?.token ?: ""
+                    model.designation = loginResponse.body()?.designation ?: "Unknown"
+                    model.company = loginResponse.body()?.company ?: "Unknown"
+                    model.email = loginResponse.body()?.email ?:""
                     if (loginResponse.body()?.isAdmin == true)
                         findNavController().navigate(R.id.action_successful_admin_login)
                     else
@@ -98,6 +101,16 @@ class LoginFragment : Fragment() {
             uiThread {
                 context?.toast(Miscellaneous.extractErrorMessage(forgotPasswordResponse.errorBody()?.string()))
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        with(model) {
+            company = ""
+            company = "Unknown"
+            designation = "Unknown"
+            token = ""
         }
     }
 }
