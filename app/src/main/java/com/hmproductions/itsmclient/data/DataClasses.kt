@@ -15,9 +15,11 @@ data class Ticket(val sysId: String, val number: String, val short_description: 
 // User authentication data classes
 data class LoginDetails(val email: String, val password: String)
 
-data class SignUpDetails(val email: String, val password: String, val company: String, val tier: Int, val designation: String)
+data class GenericAuthenticationDetails(val email: String, val password: String, val company: String, val tier: Int, val designation: String)
 
-data class GenericResponse(val statusCode: Int, val message: String, val token: String, val isAdmin: Boolean)
+data class ChangePasswordDetails(val email: String, val old: String, val new: String)
+
+data class GenericResponse(val statusCode: Int, val statusMessage: String, val token: String, val isAdmin: Boolean)
 
 // Configuration data classes
 data class ConfigurationResponse(val result: ConfigurationResult)

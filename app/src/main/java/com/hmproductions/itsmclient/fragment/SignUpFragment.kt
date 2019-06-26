@@ -11,7 +11,7 @@ import androidx.navigation.fragment.findNavController
 import com.hmproductions.itsmclient.ITSMClient
 import com.hmproductions.itsmclient.R
 import com.hmproductions.itsmclient.dagger.DaggerITSMApplicationComponent
-import com.hmproductions.itsmclient.data.SignUpDetails
+import com.hmproductions.itsmclient.data.GenericAuthenticationDetails
 import com.hmproductions.itsmclient.utils.Miscellaneous
 import kotlinx.android.synthetic.main.fragment_signup.*
 import org.jetbrains.anko.doAsync
@@ -69,7 +69,7 @@ class SignUpFragment : Fragment() {
 
         doAsync {
             val signUpResponse = client.signUp(
-                SignUpDetails(
+                GenericAuthenticationDetails(
                     email, password, company,
                     designationSpinner.selectedItemPosition + 1, designation
                 )
@@ -77,7 +77,7 @@ class SignUpFragment : Fragment() {
 
             uiThread {
                 if (signUpResponse.isSuccessful) {
-                    context?.toast(signUpResponse.body()?.message ?: "Registration success")
+                    context?.toast(signUpResponse.body()?.statusMessage ?: "Registration success")
                     findNavController().navigateUp()
                 } else
                     context?.toast(Miscellaneous.extractErrorMessage(signUpResponse.errorBody()?.string()))

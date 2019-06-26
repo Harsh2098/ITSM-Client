@@ -14,7 +14,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.25" />
+        app:layout_constraintVertical_bias="0.2" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/emailTextInputLayout"
@@ -25,7 +25,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5">
+        app:layout_constraintVertical_bias="0.45">
 
         <EditText
             android:id="@+id/emailEditText"
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:ems="12"
             android:inputType="textEmailAddress"
-            android:text="test2@test.com"
+            android:text="admin_harsh@test.com"
             android:textColor="@color/neutral_color"
             android:textSize="16sp" />
 
@@ -46,7 +46,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:hint="@string/password"
-        app:layout_constraintBottom_toTopOf="@+id/signUpTextView"
+        app:layout_constraintBottom_toTopOf="@+id/forgotPasswordTextView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/emailTextInputLayout"
@@ -69,15 +69,28 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <TextView
-        android:id="@+id/signUpTextView"
+        android:id="@+id/forgotPasswordTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="@string/don_t_have_account_sign_up"
+        android:text="@string/forgot_password_click_here_to_reset"
         app:layout_constraintBottom_toTopOf="@id/loginButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/passwordTextInputLayout" />
+
+    <Button
+        android:id="@+id/signUpNavButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/signup"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/loginButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/forgotPasswordTextView"
+        app:layout_constraintVertical_bias="0" />
 
     <Button
         android:id="@+id/loginButton"
@@ -86,11 +99,11 @@
         android:layout_marginTop="16dp"
         android:text="@string/login"
         android:textSize="20sp"
-        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/signUpTextView" />
+        app:layout_constraintStart_toEndOf="@id/signUpNavButton"
+        app:layout_constraintTop_toBottomOf="@+id/forgotPasswordTextView"
+        app:layout_constraintVertical_bias="0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

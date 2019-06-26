@@ -1,9 +1,7 @@
 package com.hmproductions.itsmclient.fragment
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
@@ -32,6 +30,11 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
     private lateinit var model: ITSMViewModel
 
     private var configurationList = mutableListOf<Configuration>()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_admin, container, false)
@@ -75,6 +78,18 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
 
     private fun flipVisibility(listExists: Boolean) {
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.admin_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.action_logout -> findNavController().navigateUp()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun getSelectedConfiguration(tier: Int): ArrayList<String> {

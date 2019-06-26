@@ -1,9 +1,7 @@
 package com.hmproductions.itsmclient.fragment
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
@@ -33,6 +31,11 @@ class HomeFragment : Fragment() {
 
     private lateinit var graphRecyclerAdapter: GraphRecyclerAdapter
     private lateinit var model: ITSMViewModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_home, container, false)
@@ -81,6 +84,20 @@ class HomeFragment : Fragment() {
                 intelligentReportButton.setOnClickListener { findNavController().navigate(R.id.action_report, bundle) }
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.home_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.action_logout -> {
+                findNavController().navigateUp()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun extractFieldsFromJson(jsonString: String): ArrayList<CoreData> {

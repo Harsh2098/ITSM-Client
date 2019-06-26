@@ -13,6 +13,7 @@ import com.hmproductions.itsmclient.R
 import com.hmproductions.itsmclient.dagger.DaggerITSMApplicationComponent
 import com.hmproductions.itsmclient.data.ITSMViewModel
 import com.hmproductions.itsmclient.data.LoginDetails
+import com.hmproductions.itsmclient.data.GenericAuthenticationDetails
 import com.hmproductions.itsmclient.utils.Miscellaneous
 import kotlinx.android.synthetic.main.fragment_login.*
 import org.jetbrains.anko.doAsync
@@ -39,7 +40,8 @@ class LoginFragment : Fragment() {
             ?: throw Exception("Invalid activity")
 
         loginButton.setOnClickListener { setupLoginButton() }
-        signUpTextView.setOnClickListener { setupSignUpText() }
+        signUpNavButton.setOnClickListener { setupSignUpText() }
+        forgotPasswordTextView.setOnClickListener { setupForgotPassword() }
     }
 
     private fun setupLoginButton() {
@@ -75,5 +77,27 @@ class LoginFragment : Fragment() {
 
     private fun setupSignUpText() {
         findNavController().navigate(R.id.action_signup)
+    }
+
+    private fun setupForgotPassword() {
+        if (emailEditText.text.toString().isEmpty() || emailEditText.text.toString() == "" ||
+            !Patterns.EMAIL_ADDRESS.matcher(emailEditText.text.toString()).matches()
+        ) {
+            context?.toast(R.string.valid_email_error_text)
+            return
+        }
+
+        doAsync {
+            val forgotPasswordResponse = client.forgotPassword(
+                GenericAuthenticationDetails(
+                    emailEditText.text.toString(), "", "",
+                    0, ""
+                )
+            ).execute()
+
+            uiThread {
+                context?.toast(Miscellaneous.extractErrorMessage(forgotPasswordResponse.errorBody()?.string()))
+            }
+        }
     }
 }

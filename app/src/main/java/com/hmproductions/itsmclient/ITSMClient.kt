@@ -13,7 +13,7 @@ interface ITSMClient {
 
     @Headers("Content-Type:application/json")
     @POST("user/signup")
-    fun signUp(@Body signUpDetails: SignUpDetails): Call<GenericResponse>
+    fun signUp(@Body genericAuthenticationDetails: GenericAuthenticationDetails): Call<GenericResponse>
 
     @GET("config")
     fun getConfigurations(@Header("Authorization") authorization: String): Call<ConfigurationResponse>
@@ -26,4 +26,10 @@ interface ITSMClient {
 
     @GET("core/data")
     fun getCoreData(@Header("Authorization") authorization: String): Call<ResponseBody>
+
+    @POST("user/reset_password")
+    fun forgotPassword(@Body genericAuthenticationDetails: GenericAuthenticationDetails): Call<GenericResponse>
+
+    @POST("user/change_password")
+    fun changePassword(@Header("Authorization") authorization: String, @Body changePasswordDetails: ChangePasswordDetails)
 }

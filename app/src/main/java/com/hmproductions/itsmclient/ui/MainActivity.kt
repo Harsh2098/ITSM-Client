@@ -1,18 +1,14 @@
 package com.hmproductions.itsmclient.ui
 
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.view.GravityCompat
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
 import com.hmproductions.itsmclient.R
 import com.hmproductions.itsmclient.data.ITSMViewModel
-import com.hmproductions.itsmclient.utils.hideKeyboard
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.contentView
+import org.jetbrains.anko.toast
 
 class MainActivity : AppCompatActivity() {
 
@@ -24,30 +20,20 @@ class MainActivity : AppCompatActivity() {
         title = getString(R.string.app_name)
 
         model = ViewModelProviders.of(this).get(ITSMViewModel::class.java)
-
         setSupportActionBar(mainToolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeAsUpIndicator(ContextCompat.getDrawable(this, R.drawable.hamburger_icon))
-
-        setupNavigationDrawer()
     }
 
-    private fun setupNavigationDrawer() {
-        val host = supportFragmentManager.findFragmentById(R.id.main_host_fragment) as NavHostFragment
-        navigationViewLeft.setupWithNavController(host.navController)
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.main_menu, menu)
+        return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-
-        contentView?.hideKeyboard()
-
         when (item.itemId) {
-            android.R.id.home -> {
-                mainDrawerLayout?.openDrawer(GravityCompat.START)  // OPEN DRAWER
-                return true
+            R.id.action_help -> {
+                toast("Helping you out everyday")
             }
         }
-
         return super.onOptionsItemSelected(item)
     }
 }
