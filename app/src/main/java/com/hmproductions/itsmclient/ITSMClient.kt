@@ -31,5 +31,9 @@ interface ITSMClient {
     fun forgotPassword(@Body genericAuthenticationDetails: GenericAuthenticationDetails): Call<GenericResponse>
 
     @POST("user/change_password")
-    fun changePassword(@Header("Authorization") authorization: String, @Body changePasswordDetails: ChangePasswordDetails)
+    fun changePassword(@Header("Authorization") authorization: String, @Body changePasswordDetails: ChangePasswordDetails): Call<GenericResponse>
+
+    @POST("alter")
+    fun alterConfiguration(@Header("Authorization") authorization: String, @Body configurationRequest: ConfigurationRequest): Call<GenericResponse>
+
 }

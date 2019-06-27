@@ -19,7 +19,7 @@ data class GenericAuthenticationDetails(val email: String, val password: String,
 
 data class ChangePasswordDetails(val email: String, val old: String, val new: String)
 
-data class GenericResponse(val statusCode: Int, val statusMessage: String, val token: String, val isAdmin: Boolean, val company: String, val designation: String, val email: String)
+data class GenericResponse(val statusCode: Int, val statusMessage: String, val token: String, val isAdmin: Boolean, val company: String, val designation: String)
 
 // Configuration data classes
 data class ConfigurationResponse(val result: ConfigurationResult)

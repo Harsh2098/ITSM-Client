@@ -13,6 +13,8 @@ import com.hmproductions.itsmclient.dagger.DaggerITSMApplicationComponent
 import com.hmproductions.itsmclient.data.Configuration
 import com.hmproductions.itsmclient.data.ITSMViewModel
 import com.hmproductions.itsmclient.utils.Constants
+import com.hmproductions.itsmclient.utils.Constants.ADMIN_USER
+import com.hmproductions.itsmclient.utils.Constants.CONFIG_FRAGMENT_MODE
 import com.hmproductions.itsmclient.utils.Miscellaneous
 import kotlinx.android.synthetic.main.fragment_admin.*
 import org.jetbrains.anko.doAsync
@@ -52,7 +54,11 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
         configurationsRecyclerView.adapter = configurationAdapter
         configurationsRecyclerView.setHasFixedSize(true)
 
-        addConfigurationFab.setOnClickListener { findNavController().navigate(R.id.action_new_configuration) }
+        addConfigurationFab.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putString(CONFIG_FRAGMENT_MODE, ADMIN_USER)
+            findNavController().navigate(R.id.action_new_configuration, bundle)
+        }
     }
 
     private fun getAllConfigurationsAsync() {

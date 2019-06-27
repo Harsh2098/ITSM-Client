@@ -25,6 +25,12 @@
     <string name="help">Help</string>
     <string name="profile">Profile</string>
     <string name="profile_photo">Profile photo</string>
+    <string name="designation">Designation</string>
+    <string name="change_password">Change Password</string>
+    <string name="request_new_configuration">Request new configuration</string>
+    <string name="new_password">New Password</string>
+    <string name="old_password">Old Password</string>
+    <string name="request_config">Request Config</string>
 
     <string-array name="designations">
         <item>Vice President</item>

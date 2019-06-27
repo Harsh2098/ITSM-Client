@@ -13,13 +13,17 @@ import com.hmproductions.itsmclient.R
 import com.hmproductions.itsmclient.adapter.FieldRecyclerAdapter
 import com.hmproductions.itsmclient.dagger.DaggerITSMApplicationComponent
 import com.hmproductions.itsmclient.data.ConfigurationRequest
+import com.hmproductions.itsmclient.data.GenericResponse
 import com.hmproductions.itsmclient.data.ITSMViewModel
 import com.hmproductions.itsmclient.utils.Constants
+import com.hmproductions.itsmclient.utils.Constants.ADMIN_USER
+import com.hmproductions.itsmclient.utils.Constants.CONFIG_FRAGMENT_MODE
 import com.hmproductions.itsmclient.utils.Miscellaneous
 import kotlinx.android.synthetic.main.fragment_field.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
+import retrofit2.Response
 import javax.inject.Inject
 
 class ConfigurationFragment : Fragment() {
@@ -29,6 +33,7 @@ class ConfigurationFragment : Fragment() {
 
     private lateinit var fieldAdapter: FieldRecyclerAdapter
     private lateinit var model: ITSMViewModel
+    lateinit var mode: String
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_field, container, false)
@@ -46,12 +51,20 @@ class ConfigurationFragment : Fragment() {
         fieldsRecyclerView.adapter = fieldAdapter
         fieldsRecyclerView.setHasFixedSize(true)
 
+        mode = arguments?.getString(CONFIG_FRAGMENT_MODE) ?: ADMIN_USER
+
         with(tierPicker) {
             maxValue = resources.getStringArray(R.array.designations).size
             minValue = 1
             wrapSelectorWheel = false
 
-            value = resources.getStringArray(R.array.designations).size / 2
+            if (mode == ADMIN_USER)
+                value = resources.getStringArray(R.array.designations).size / 2
+            else {
+                value = model.tier
+                isEnabled = false
+                setConfigButton.setText(R.string.request_config)
+            }
         }
 
         getAllConfigurationsAsync()
@@ -62,6 +75,7 @@ class ConfigurationFragment : Fragment() {
     private fun getAllConfigurationsAsync() {
         doAsync {
             val fieldResponse = client.getAvailableFields(model.token).execute()
+            val allConfigurationsResponse = client.getConfigurations(model.token).execute()
 
             uiThread {
                 if (fieldResponse.isSuccessful) {
@@ -69,11 +83,22 @@ class ConfigurationFragment : Fragment() {
                     if (fieldList.isNotEmpty()) {
                         fieldList = fieldList.sortedWith(compareBy { it.field })
 
-                        val incomingList = arguments?.getStringArrayList(Constants.ALREADY_SELECTED_KEY)
-                        if (incomingList != null) {
-                            for (item in incomingList) {
-                                fieldList.find { it.field == item }?.checked = true
+                        var incomingList = mutableListOf<String>()
+                        if (mode == ADMIN_USER)
+                            incomingList =
+                                arguments?.getStringArrayList(Constants.ALREADY_SELECTED_KEY) ?: mutableListOf()
+                        else {
+                            for (config in allConfigurationsResponse.body()?.result?.configurations
+                                ?: mutableListOf()) {
+                                if (config.tier == model.tier) {
+                                    incomingList = config.fields as MutableList<String>
+                                    break
+                                }
                             }
+                        }
+
+                        for (item in incomingList) {
+                            fieldList.find { it.field == item }?.checked = true
                         }
 
                         fieldAdapter.swapData(fieldList)
@@ -99,16 +124,24 @@ class ConfigurationFragment : Fragment() {
         }
 
         doAsync {
-            val createConfigResponse =
-                client.setConfiguration(model.token, ConfigurationRequest(tierPicker.value, customList)).execute()
+            val genericResponse: Response<GenericResponse>
+            if (mode == ADMIN_USER) {
+                genericResponse =
+                    client.setConfiguration(model.token, ConfigurationRequest(tierPicker.value, customList)).execute()
+            } else {
+                genericResponse =
+                    client.alterConfiguration(model.token, ConfigurationRequest(tierPicker.value, customList)).execute()
+            }
 
             uiThread {
-                if (createConfigResponse.isSuccessful) {
+                if (genericResponse.isSuccessful) {
                     findNavController().navigateUp()
+                    context?.toast(genericResponse.body()?.statusMessage ?: "")
                 } else {
-                    context?.toast(Miscellaneous.extractErrorMessage(createConfigResponse.errorBody()?.string()))
+                    context?.toast(Miscellaneous.extractErrorMessage(genericResponse.errorBody()?.string()))
                 }
             }
         }
+
     }
 }

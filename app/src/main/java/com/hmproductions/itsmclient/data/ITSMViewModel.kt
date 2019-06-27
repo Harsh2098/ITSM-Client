@@ -7,4 +7,5 @@ class ITSMViewModel : ViewModel() {
     var designation = "Unknown"
     var company = "Unknown"
     var email = ""
+    var tier = -1
 }
