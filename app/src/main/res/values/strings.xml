@@ -31,6 +31,8 @@
     <string name="new_password">New Password</string>
     <string name="old_password">Old Password</string>
     <string name="request_config">Request Config</string>
+    <string name="current_configurations">Current Configurations</string>
+    <string name="requested_configurations">Requested Configurations</string>
 
     <string-array name="designations">
         <item>Vice President</item>
