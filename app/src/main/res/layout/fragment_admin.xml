@@ -23,21 +23,13 @@
         android:id="@+id/configurationsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@id/adminGuideline"
+        app:layout_constraintBottom_toTopOf="@id/adminGuideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/currentConfigurationsText" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/adminGuideline"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintGuide_percent="0.5" />
-
     <TextView
-        android:id="@+id/requestConfigurationsText"
+        android:id="@+id/requestedConfigurationsText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -49,27 +41,35 @@
         app:layout_constraintBottom_toTopOf="@id/requestsRecyclerView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/adminGuideline" />
+        app:layout_constraintTop_toBottomOf="@id/adminGuideline" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/requestsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@id/adminGuideline"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/currentConfigurationsText" />
+        app:layout_constraintTop_toBottomOf="@id/requestedConfigurationsText" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <ImageButton
         android:id="@+id/addConfigurationFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
+        android:contentDescription="@string/add_configuration"
         android:elevation="8dp"
         android:src="@drawable/add_icon"
         app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:maxImageSize="36dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/adminGuideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

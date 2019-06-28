@@ -36,4 +36,6 @@ interface ITSMClient {
     @POST("alter")
     fun alterConfiguration(@Header("Authorization") authorization: String, @Body configurationRequest: ConfigurationRequest): Call<GenericResponse>
 
+    @GET("alter")
+    fun getRequestedConfigurations(@Header("Authorization") authorization: String): Call<AlterResponse>
 }

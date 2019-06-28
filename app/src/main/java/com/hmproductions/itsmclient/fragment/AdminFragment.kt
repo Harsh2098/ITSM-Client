@@ -9,7 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.hmproductions.itsmclient.ITSMClient
 import com.hmproductions.itsmclient.R
 import com.hmproductions.itsmclient.adapter.ConfigurationRecyclerAdapter
+import com.hmproductions.itsmclient.adapter.RequestRecyclerAdapter
 import com.hmproductions.itsmclient.dagger.DaggerITSMApplicationComponent
+import com.hmproductions.itsmclient.data.AlterRequest
 import com.hmproductions.itsmclient.data.Configuration
 import com.hmproductions.itsmclient.data.ITSMViewModel
 import com.hmproductions.itsmclient.utils.Constants
@@ -23,15 +25,17 @@ import org.jetbrains.anko.uiThread
 import java.util.ArrayList
 import javax.inject.Inject
 
-class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationClickListener {
+class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationClickListener, RequestRecyclerAdapter.OnRequestClickListener {
 
     @Inject
     lateinit var client: ITSMClient
 
     private lateinit var configurationAdapter: ConfigurationRecyclerAdapter
+    private lateinit var requestsAdapter: RequestRecyclerAdapter
     private lateinit var model: ITSMViewModel
 
     private var configurationList = mutableListOf<Configuration>()
+    private var requestsList = mutableListOf<AlterRequest>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,6 +57,11 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
         configurationsRecyclerView.layoutManager = LinearLayoutManager(context)
         configurationsRecyclerView.adapter = configurationAdapter
         configurationsRecyclerView.setHasFixedSize(true)
+
+        requestsAdapter = RequestRecyclerAdapter(context, null, this)
+        requestsRecyclerView.layoutManager = LinearLayoutManager(context)
+        requestsRecyclerView.adapter = requestsAdapter
+        requestsRecyclerView.setHasFixedSize(true)
 
         addConfigurationFab.setOnClickListener {
             val bundle = Bundle()
@@ -77,6 +86,26 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
                     flipVisibility(configurationList.isNotEmpty())
                 } else {
                     context?.toast(Miscellaneous.extractErrorMessage(configurationResponse.errorBody()?.string()))
+                }
+            }
+        }
+    }
+
+    private fun getAllRequestedConfigurationsAsync() {
+        doAsync {
+            val alterResponse = client.getRequestedConfigurations(model.token).execute()
+
+            uiThread {
+                if(alterResponse.isSuccessful) {
+                    var requestsList = alterResponse.body()?.requests?: mutableListOf()
+                    if(requestsList.isNotEmpty()) {
+                        requestsList = requestsList.sortedWith(compareBy { it.tier })
+
+                        this@AdminFragment.requestsList = requestsList.toMutableList()
+                        requestsAdapter.swapData(requestsList)
+                    }
+                } else {
+                    context?.toast(Miscellaneous.extractErrorMessage(alterResponse.errorBody()?.string()))
                 }
             }
         }
@@ -114,8 +143,13 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
         findNavController().navigate(R.id.action_new_configuration, bundle)
     }
 
+    override fun onRequestClick(tier: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun onResume() {
         super.onResume()
         getAllConfigurationsAsync()
+        getAllRequestedConfigurationsAsync()
     }
 }
