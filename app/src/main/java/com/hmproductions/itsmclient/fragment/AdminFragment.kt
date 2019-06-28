@@ -1,5 +1,6 @@
 package com.hmproductions.itsmclient.fragment
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
@@ -13,6 +14,7 @@ import com.hmproductions.itsmclient.adapter.RequestRecyclerAdapter
 import com.hmproductions.itsmclient.dagger.DaggerITSMApplicationComponent
 import com.hmproductions.itsmclient.data.AlterRequest
 import com.hmproductions.itsmclient.data.Configuration
+import com.hmproductions.itsmclient.data.DeleteConfigurationRequest
 import com.hmproductions.itsmclient.data.ITSMViewModel
 import com.hmproductions.itsmclient.utils.Constants
 import com.hmproductions.itsmclient.utils.Constants.ADMIN_USER
@@ -22,10 +24,11 @@ import kotlinx.android.synthetic.main.fragment_admin.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
-import java.util.ArrayList
+import java.util.*
 import javax.inject.Inject
 
-class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationClickListener, RequestRecyclerAdapter.OnRequestClickListener {
+class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationClickListener,
+    RequestRecyclerAdapter.OnRequestClickListener {
 
     @Inject
     lateinit var client: ITSMClient
@@ -96,9 +99,9 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
             val alterResponse = client.getRequestedConfigurations(model.token).execute()
 
             uiThread {
-                if(alterResponse.isSuccessful) {
-                    var requestsList = alterResponse.body()?.requests?: mutableListOf()
-                    if(requestsList.isNotEmpty()) {
+                if (alterResponse.isSuccessful) {
+                    var requestsList = alterResponse.body()?.requests ?: mutableListOf()
+                    if (requestsList.isNotEmpty()) {
                         requestsList = requestsList.sortedWith(compareBy { it.tier })
 
                         this@AdminFragment.requestsList = requestsList.toMutableList()
@@ -121,7 +124,7 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.action_logout -> findNavController().navigateUp()
         }
         return super.onOptionsItemSelected(item)
@@ -129,12 +132,34 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
 
     private fun getSelectedConfiguration(tier: Int): ArrayList<String> {
         val answer = mutableListOf<String>()
-        for(config in configurationList) {
-            if(config.tier == tier) {
+        for (config in configurationList) {
+            if (config.tier == tier) {
                 answer.addAll(config.fields)
             }
         }
         return answer as ArrayList<String>
+    }
+
+    private fun deleteRequestAsynchronously(requestId: String) {
+        doAsync {
+            val deleteRequestResponse = client.deleteConfigurationRequest(model.token, DeleteConfigurationRequest(requestId)).execute()
+
+            uiThread {
+                if (deleteRequestResponse.isSuccessful) {
+                    findNavController().navigateUp()
+                    getAllRequestedConfigurationsAsync()
+                    context?.toast(deleteRequestResponse.body()?.statusMessage ?: "")
+                } else {
+                    context?.toast(Miscellaneous.extractErrorMessage(deleteRequestResponse.errorBody()?.string()))
+                }
+            }
+        }
+    }
+
+    private fun acceptRequestAsynchronously(requestId: String) {
+        doAsync {
+
+        }
     }
 
     override fun onConfigurationClick(tier: Int) {
@@ -143,8 +168,15 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
         findNavController().navigate(R.id.action_new_configuration, bundle)
     }
 
-    override fun onRequestClick(tier: Int) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun onRequestClick(requestId: String) {
+        AlertDialog.Builder(context)
+            .setTitle("Confirm Request")
+            .setMessage("Do you want to confirm this configuration request?")
+            .setPositiveButton("Yes") { _, _ -> acceptRequestAsynchronously(requestId) }
+            .setNegativeButton("Reject") { _, _ -> deleteRequestAsynchronously(requestId) }
+            .setNeutralButton("Cancel") { dI, _ -> dI.dismiss() }
+            .setCancelable(true)
+            .show()
     }
 
     override fun onResume() {

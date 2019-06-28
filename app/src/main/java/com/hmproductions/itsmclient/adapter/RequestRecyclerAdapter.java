@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.hmproductions.itsmclient.R;
 import com.hmproductions.itsmclient.data.AlterRequest;
-import com.hmproductions.itsmclient.data.Configuration;
 
 import java.util.List;
 
@@ -20,7 +19,7 @@ public class RequestRecyclerAdapter extends RecyclerView.Adapter<RequestRecycler
     private OnRequestClickListener listener;
 
     public interface OnRequestClickListener {
-        void onRequestClick(int tier);
+        void onRequestClick(String requestId);
     }
 
     public RequestRecyclerAdapter(Context context, List<AlterRequest> list, OnRequestClickListener listener) {
@@ -43,16 +42,16 @@ public class RequestRecyclerAdapter extends RecyclerView.Adapter<RequestRecycler
         holder.requestTierTextView.setText(String.valueOf(currentConfiguration.getTier()));
 
         StringBuilder stringBuilder = new StringBuilder();
-        for(String field : currentConfiguration.getFields()) {
+        for (String field : currentConfiguration.getFields()) {
             stringBuilder.append(field).append(", ");
         }
-        stringBuilder.delete(stringBuilder.length()-2, stringBuilder.length()-1);
+        stringBuilder.delete(stringBuilder.length() - 2, stringBuilder.length() - 1);
         holder.requestConfigTextView.setText(stringBuilder.toString());
     }
 
     @Override
     public int getItemCount() {
-        if(list == null) return 0;
+        if (list == null) return 0;
         return list.size();
     }
 
@@ -75,7 +74,7 @@ public class RequestRecyclerAdapter extends RecyclerView.Adapter<RequestRecycler
 
         @Override
         public void onClick(View v) {
-            listener.onRequestClick(list.get(getAdapterPosition()).getTier());
+            listener.onRequestClick(list.get(getAdapterPosition()).getId());
         }
     }
 }

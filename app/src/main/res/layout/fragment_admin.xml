@@ -23,16 +23,25 @@
         android:id="@+id/configurationsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="2dp"
         app:layout_constraintBottom_toTopOf="@id/adminGuideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/currentConfigurationsText" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/gray"
+        app:layout_constraintBottom_toTopOf="@id/requestedConfigurationsText"
+        app:layout_constraintTop_toBottomOf="@id/configurationsRecyclerView" />
 
     <TextView
         android:id="@+id/requestedConfigurationsText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
+        android:layout_marginTop="2dp"
         android:text="@string/requested_configurations"
         android:textAllCaps="true"
         android:textColor="@color/gray"

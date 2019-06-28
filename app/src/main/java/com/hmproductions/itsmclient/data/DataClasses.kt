@@ -40,6 +40,8 @@ data class AlterResponse(val requests: List<AlterRequest>)
 
 data class AlterRequest(val id: String, val tier: Int, val fields: List<String>)
 
+data class DeleteConfigurationRequest(val id: String)
+
 // Normal user core data classes
 @Parcelize
 data class CoreData(val fieldName: String, val stringValues: MutableList<String>, val intValues: MutableList<Int>, val rank: Priority) : Parcelable
