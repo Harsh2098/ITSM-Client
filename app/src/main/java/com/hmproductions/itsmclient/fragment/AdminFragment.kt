@@ -118,12 +118,12 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
 
     private fun flipSetConfigVisibility(listExists: Boolean) {
         noConfigurationsTextView.visibility = if (listExists) View.GONE else View.VISIBLE
-        configurationsRecyclerView.visibility = if (listExists) View.VISIBLE else View.GONE
+        configurationsRecyclerView.visibility = if (listExists) View.VISIBLE else View.INVISIBLE
     }
 
     private fun flipRequestConfigVisibility(listExists: Boolean) {
         noRequestsTextView.visibility = if (listExists) View.GONE else View.VISIBLE
-        requestsRecyclerView.visibility = if (listExists) View.VISIBLE else View.GONE
+        requestsRecyclerView.visibility = if (listExists) View.VISIBLE else View.INVISIBLE
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -155,7 +155,6 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
 
             uiThread {
                 if (deleteRequestResponse.isSuccessful) {
-                    findNavController().navigateUp()
                     getAllRequestedConfigurationsAsync()
                     context?.toast(deleteRequestResponse.body()?.statusMessage ?: "")
                 } else {

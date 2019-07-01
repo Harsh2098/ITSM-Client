@@ -39,6 +39,6 @@ interface ITSMClient {
     @GET("alter")
     fun getRequestedConfigurations(@Header("Authorization") authorization: String): Call<AlterResponse>
 
-    @DELETE("alter")
+    @HTTP(method = "DELETE", path = "alter", hasBody = true)
     fun deleteConfigurationRequest(@Header("Authorization") authorization: String, @Body deleteConfigurationRequest: DeleteConfigurationRequest): Call<GenericResponse>
 }

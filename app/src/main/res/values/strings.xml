@@ -37,11 +37,15 @@
     <string name="no_configurations_found">No configurations found</string>
 
     <string-array name="designations">
-        <item>Vice President</item>
-        <item>Director</item>
-        <item>Sr. Engineer</item>
-        <item>Jr. Engineer</item>
-        <item>Intern</item>
+        <item>CEO / MD</item>
+        <item>HR Manager</item>
+        <item>PHP Developer</item>
+        <item>Project Manager</item>
+        <item>General Manager</item>
+        <item>Business Development Manager</item>
+        <item>Internet Marketing Head</item>
+        <item>Content Writer</item>
+        <item>System Administrator</item>
     </string-array>
 
 </resources>
