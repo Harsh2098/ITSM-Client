@@ -33,6 +33,8 @@
     <string name="request_config">Request Config</string>
     <string name="current_configurations">Current Configurations</string>
     <string name="requested_configurations">Requested Configurations</string>
+    <string name="no_requests_found">No requests found</string>
+    <string name="no_configurations_found">No configurations found</string>
 
     <string-array name="designations">
         <item>Vice President</item>

@@ -12,10 +12,7 @@ import com.hmproductions.itsmclient.R
 import com.hmproductions.itsmclient.adapter.ConfigurationRecyclerAdapter
 import com.hmproductions.itsmclient.adapter.RequestRecyclerAdapter
 import com.hmproductions.itsmclient.dagger.DaggerITSMApplicationComponent
-import com.hmproductions.itsmclient.data.AlterRequest
-import com.hmproductions.itsmclient.data.Configuration
-import com.hmproductions.itsmclient.data.DeleteConfigurationRequest
-import com.hmproductions.itsmclient.data.ITSMViewModel
+import com.hmproductions.itsmclient.data.*
 import com.hmproductions.itsmclient.utils.Constants
 import com.hmproductions.itsmclient.utils.Constants.ADMIN_USER
 import com.hmproductions.itsmclient.utils.Constants.CONFIG_FRAGMENT_MODE
@@ -85,11 +82,13 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
 
                         this@AdminFragment.configurationList = configurationList.toMutableList()
                         configurationAdapter.swapData(configurationList)
+                    } else {
+                        this@AdminFragment.configurationList.clear()
                     }
-                    flipVisibility(configurationList.isNotEmpty())
                 } else {
                     context?.toast(Miscellaneous.extractErrorMessage(configurationResponse.errorBody()?.string()))
                 }
+                flipSetConfigVisibility(configurationList.isNotEmpty())
             }
         }
     }
@@ -106,16 +105,25 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
 
                         this@AdminFragment.requestsList = requestsList.toMutableList()
                         requestsAdapter.swapData(requestsList)
+                    } else {
+                        this@AdminFragment.requestsList.clear()
                     }
                 } else {
                     context?.toast(Miscellaneous.extractErrorMessage(alterResponse.errorBody()?.string()))
                 }
+                flipRequestConfigVisibility(requestsList.isNotEmpty())
             }
         }
     }
 
-    private fun flipVisibility(listExists: Boolean) {
+    private fun flipSetConfigVisibility(listExists: Boolean) {
+        noConfigurationsTextView.visibility = if (listExists) View.GONE else View.VISIBLE
+        configurationsRecyclerView.visibility = if (listExists) View.VISIBLE else View.GONE
+    }
 
+    private fun flipRequestConfigVisibility(listExists: Boolean) {
+        noRequestsTextView.visibility = if (listExists) View.GONE else View.VISIBLE
+        requestsRecyclerView.visibility = if (listExists) View.VISIBLE else View.GONE
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -142,7 +150,8 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
 
     private fun deleteRequestAsynchronously(requestId: String) {
         doAsync {
-            val deleteRequestResponse = client.deleteConfigurationRequest(model.token, DeleteConfigurationRequest(requestId)).execute()
+            val deleteRequestResponse =
+                client.deleteConfigurationRequest(model.token, DeleteConfigurationRequest(requestId)).execute()
 
             uiThread {
                 if (deleteRequestResponse.isSuccessful) {
@@ -157,9 +166,47 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
     }
 
     private fun acceptRequestAsynchronously(requestId: String) {
-        doAsync {
 
+        doAsync {
+            val currentTier = getTierFromRequestId(requestId)
+            val allFields = getCombinedFields(configurationList, requestsList, requestId, currentTier)
+            val setConfigurationResponse =
+                client.setConfiguration(model.token, ConfigurationRequest(currentTier, allFields)).execute()
+            uiThread {
+                if (setConfigurationResponse.isSuccessful) {
+                    deleteRequestAsynchronously(requestId)
+                    getAllRequestedConfigurationsAsync()
+                    getAllConfigurationsAsync()
+                } else {
+                    context?.toast(Miscellaneous.extractErrorMessage(setConfigurationResponse.errorBody()?.string()))
+                }
+            }
         }
+    }
+
+    private fun getCombinedFields(configList: List<Configuration>, requestList: List<AlterRequest>, uniqueId: String, tier: Int): List<String> {
+        val combinedFields = mutableListOf<String>()
+        for (currentConfig in configList) {
+            if (currentConfig.tier == tier)
+                combinedFields.addAll(currentConfig.fields)
+        }
+
+        for (currentRequest in requestList) {
+            if (currentRequest.id == uniqueId) {
+                combinedFields.addAll(currentRequest.fields)
+            }
+        }
+
+        return combinedFields.distinct()
+    }
+
+    private fun getTierFromRequestId(requestId: String): Int {
+        for (currentRequest in requestsList) {
+            if (currentRequest.id == requestId)
+                return currentRequest.tier
+        }
+
+        return -1
     }
 
     override fun onConfigurationClick(tier: Int) {
@@ -171,7 +218,7 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
     override fun onRequestClick(requestId: String) {
         AlertDialog.Builder(context)
             .setTitle("Confirm Request")
-            .setMessage("Do you want to confirm this configuration request?")
+            .setMessage("Requested fields will be appended to existing configuration. Do you want to accept this request?")
             .setPositiveButton("Yes") { _, _ -> acceptRequestAsynchronously(requestId) }
             .setNegativeButton("Reject") { _, _ -> deleteRequestAsynchronously(requestId) }
             .setNeutralButton("Cancel") { dI, _ -> dI.dismiss() }
