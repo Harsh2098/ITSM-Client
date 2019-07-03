@@ -7,13 +7,20 @@ import retrofit2.http.*
 
 interface ITSMClient {
 
-    @Headers("Content-Type:application/json")
     @POST("user/login")
-    fun login(@Body loginDetails: LoginDetails): Call<GenericResponse>
+    fun login(@Body accountDetails: AccountDetails): Call<GenericResponse>
 
-    @Headers("Content-Type:application/json")
     @POST("user/signup")
     fun signUp(@Body genericAuthenticationDetails: GenericAuthenticationDetails): Call<GenericResponse>
+
+    @POST("user/reset_password")
+    fun forgotPassword(@Body genericAuthenticationDetails: GenericAuthenticationDetails): Call<GenericResponse>
+
+    @POST("user/change_password")
+    fun changePassword(@Header("Authorization") authorization: String, @Body changePasswordDetails: ChangePasswordDetails): Call<GenericResponse>
+
+    @HTTP(method = "DELETE", path = "user/delete", hasBody = true)
+    fun deleteAccount(@Header ("Authorization") authorization: String, @Body accountDetails: AccountDetails): Call<GenericResponse>
 
     @GET("config")
     fun getConfigurations(@Header("Authorization") authorization: String): Call<ConfigurationResponse>
@@ -27,17 +34,14 @@ interface ITSMClient {
     @GET("core/data")
     fun getCoreData(@Header("Authorization") authorization: String): Call<ResponseBody>
 
-    @POST("user/reset_password")
-    fun forgotPassword(@Body genericAuthenticationDetails: GenericAuthenticationDetails): Call<GenericResponse>
-
-    @POST("user/change_password")
-    fun changePassword(@Header("Authorization") authorization: String, @Body changePasswordDetails: ChangePasswordDetails): Call<GenericResponse>
-
     @POST("alter")
     fun alterConfiguration(@Header("Authorization") authorization: String, @Body configurationRequest: ConfigurationRequest): Call<GenericResponse>
 
     @GET("alter")
-    fun getRequestedConfigurations(@Header("Authorization") authorization: String): Call<AlterResponse>
+    fun getRequestedConfigurationsForAdmin(@Header("Authorization") authorization: String): Call<AlterAdminResponse>
+
+    @GET("alter")
+    fun getRequestedConfigurationsForUser(@Header("Authorization") authorization: String): Call<AlterUserResponse>
 
     @HTTP(method = "DELETE", path = "alter", hasBody = true)
     fun deleteConfigurationRequest(@Header("Authorization") authorization: String, @Body deleteConfigurationRequest: DeleteConfigurationRequest): Call<GenericResponse>

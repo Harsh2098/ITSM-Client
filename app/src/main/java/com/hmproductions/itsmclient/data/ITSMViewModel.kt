@@ -8,4 +8,5 @@ class ITSMViewModel : ViewModel() {
     var company = "Unknown"
     var email = ""
     var tier = -1
+    var requestId = ""
 }

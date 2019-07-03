@@ -13,17 +13,14 @@ import com.hmproductions.itsmclient.R
 import com.hmproductions.itsmclient.adapter.FieldRecyclerAdapter
 import com.hmproductions.itsmclient.dagger.DaggerITSMApplicationComponent
 import com.hmproductions.itsmclient.data.ConfigurationRequest
-import com.hmproductions.itsmclient.data.GenericResponse
 import com.hmproductions.itsmclient.data.ITSMViewModel
 import com.hmproductions.itsmclient.utils.Constants
-import com.hmproductions.itsmclient.utils.Constants.ADMIN_USER
-import com.hmproductions.itsmclient.utils.Constants.CONFIG_FRAGMENT_MODE
+import com.hmproductions.itsmclient.utils.Constants.*
 import com.hmproductions.itsmclient.utils.Miscellaneous
 import kotlinx.android.synthetic.main.fragment_field.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
-import retrofit2.Response
 import javax.inject.Inject
 
 class ConfigurationFragment : Fragment() {
@@ -124,19 +121,17 @@ class ConfigurationFragment : Fragment() {
         }
 
         doAsync {
-            val genericResponse: Response<GenericResponse>
-            if (mode == ADMIN_USER) {
-                genericResponse =
-                    client.setConfiguration(model.token, ConfigurationRequest(tierPicker.value, customList)).execute()
+            val genericResponse = if (mode == ADMIN_USER) {
+                client.setConfiguration(model.token, ConfigurationRequest(tierPicker.value, customList)).execute()
             } else {
-                genericResponse =
-                    client.alterConfiguration(model.token, ConfigurationRequest(tierPicker.value, customList)).execute()
+                client.alterConfiguration(model.token, ConfigurationRequest(tierPicker.value, customList)).execute()
             }
 
             uiThread {
                 if (genericResponse.isSuccessful) {
                     findNavController().navigateUp()
                     context?.toast(genericResponse.body()?.statusMessage ?: "")
+                    if (mode == NORMAL_USER) model.requestId = genericResponse.body()?.config_request_id ?: ""
                 } else {
                     context?.toast(Miscellaneous.extractErrorMessage(genericResponse.errorBody()?.string()))
                 }

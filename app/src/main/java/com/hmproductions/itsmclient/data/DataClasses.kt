@@ -13,13 +13,13 @@ data class Ticket(val sysId: String, val number: String, val short_description: 
                   val sysModeCount: Int, val companyId: String)
 
 // User authentication data classes
-data class LoginDetails(val email: String, val password: String)
+data class AccountDetails(val email: String, val password: String)
 
 data class GenericAuthenticationDetails(val email: String, val password: String, val company: String, val tier: Int, val designation: String)
 
 data class ChangePasswordDetails(val email: String, val old: String, val new: String)
 
-data class GenericResponse(val statusCode: Int, val statusMessage: String, val token: String, val isAdmin: Boolean, val company: String, val designation: String)
+data class GenericResponse(val statusCode: Int, val statusMessage: String, val token: String, val isAdmin: Boolean, val company: String, val designation: String, val config_request_id: String)
 
 // Configuration data classes
 data class ConfigurationResponse(val result: ConfigurationResult)
@@ -36,7 +36,9 @@ data class ConfigurationField(val field: String, val inferredType: String, var c
 data class ConfigurationRequest(val tier: Int, val fields: List<String>)
 
 // Alter data classes
-data class AlterResponse(val requests: List<AlterRequest>)
+data class AlterAdminResponse(val requests: List<AlterRequest>)
+
+data class AlterUserResponse(val request: AlterRequest)
 
 data class AlterRequest(val id: String, val tier: Int, val fields: List<String>)
 

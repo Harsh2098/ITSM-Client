@@ -61,6 +61,12 @@
             android:id="@+id/action_request_configuration"
             app:destination="@+id/configuration_dest" />
 
+        <action
+            android:id="@+id/action_delete_account_confirm"
+            app:destination="@+id/login_dest"
+            app:popUpTo="@id/home_dest"
+            app:popUpToInclusive="true" />
+
     </fragment>
 
     <fragment

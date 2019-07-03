@@ -35,6 +35,9 @@
     <string name="requested_configurations">Requested Configurations</string>
     <string name="no_requests_found">No requests found</string>
     <string name="no_configurations_found">No configurations found</string>
+    <string name="delete_account">Delete Account</string>
+    <string name="pending_request">Pending Request Details</string>
+    <string name="no_pending_requests">No pending requests</string>
 
     <string-array name="designations">
         <item>CEO / MD</item>

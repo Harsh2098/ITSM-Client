@@ -12,7 +12,7 @@ import com.hmproductions.itsmclient.ITSMClient
 import com.hmproductions.itsmclient.R
 import com.hmproductions.itsmclient.dagger.DaggerITSMApplicationComponent
 import com.hmproductions.itsmclient.data.ITSMViewModel
-import com.hmproductions.itsmclient.data.LoginDetails
+import com.hmproductions.itsmclient.data.AccountDetails
 import com.hmproductions.itsmclient.data.GenericAuthenticationDetails
 import com.hmproductions.itsmclient.utils.Miscellaneous
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -59,7 +59,7 @@ class LoginFragment : Fragment() {
 
         doAsync {
             val loginResponse = client
-                .login(LoginDetails(emailEditText.text.toString(), passwordEditText.text.toString())).execute()
+                .login(AccountDetails(emailEditText.text.toString(), passwordEditText.text.toString())).execute()
 
             uiThread {
                 if (loginResponse.isSuccessful) {
@@ -67,6 +67,7 @@ class LoginFragment : Fragment() {
                     model.designation = loginResponse.body()?.designation ?: "Unknown"
                     model.company = loginResponse.body()?.company ?: "Unknown"
                     model.email = emailEditText.text.toString()
+                    model.requestId = loginResponse.body()?.config_request_id ?: ""
                     model.tier =
                         context?.resources?.getStringArray(R.array.designations)?.indexOf(model.designation) ?: -1 + 1
                     if (loginResponse.body()?.isAdmin == true)

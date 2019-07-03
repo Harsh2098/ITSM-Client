@@ -95,7 +95,7 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
 
     private fun getAllRequestedConfigurationsAsync() {
         doAsync {
-            val alterResponse = client.getRequestedConfigurations(model.token).execute()
+            val alterResponse = client.getRequestedConfigurationsForAdmin(model.token).execute()
 
             uiThread {
                 if (alterResponse.isSuccessful) {
