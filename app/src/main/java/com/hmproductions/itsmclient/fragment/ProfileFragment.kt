@@ -29,6 +29,7 @@ class ProfileFragment : Fragment() {
     lateinit var client: ITSMClient
 
     private lateinit var model: ITSMViewModel
+    private lateinit var loadingDialog: AlertDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_profile, container, false)
@@ -40,6 +41,10 @@ class ProfileFragment : Fragment() {
 
         model = activity?.run { ViewModelProviders.of(this).get(ITSMViewModel::class.java) }
             ?: throw Exception("Invalid activity")
+
+        loadingDialog =
+            AlertDialog.Builder(context).setView(LayoutInflater.from(context).inflate(R.layout.loading_dialog, null))
+                .create()
 
         profileEmailTextView.text = model.email
         profileCompanyTextView.text = model.company
@@ -109,11 +114,15 @@ class ProfileFragment : Fragment() {
     }
 
     private fun deleteRequestAsynchronously(requestId: String) {
+        loadingDialog.show()
+
         doAsync {
             val deleteRequestResponse =
                 client.deleteConfigurationRequest(model.token, DeleteConfigurationRequest(requestId)).execute()
 
             uiThread {
+                loadingDialog.dismiss()
+
                 if (deleteRequestResponse.isSuccessful) {
                     model.requestId = ""
                     setupRequestConfigurationTextView()
@@ -139,11 +148,13 @@ class ProfileFragment : Fragment() {
 
     private fun changePasswordAsynchronously(oldPassword: String, newPassword: String) {
         val changePasswordDetails = ChangePasswordDetails(model.email, oldPassword, newPassword)
+        loadingDialog.show()
 
         doAsync {
             val genericResponse = client.changePassword(model.token, changePasswordDetails).execute()
 
             uiThread {
+                loadingDialog.dismiss()
                 if (genericResponse.isSuccessful) {
                     context?.toast(genericResponse.body()?.statusMessage ?: "")
                 } else
@@ -153,26 +164,29 @@ class ProfileFragment : Fragment() {
     }
 
     private fun deleteAccountAsynchronously(email: String) {
+        loadingDialog.show()
         doAsync {
             val deleteAccountResponse = client.deleteAccount(model.token, AccountDetails(email, "")).execute()
 
             uiThread {
-                uiThread {
-                    if (deleteAccountResponse.isSuccessful) {
-                        context?.toast(deleteAccountResponse.body()?.statusMessage ?: "")
-                        findNavController().navigate(R.id.action_delete_account_confirm)
-                    } else
-                        context?.toast(Miscellaneous.extractErrorMessage(deleteAccountResponse.errorBody()?.string()))
-                }
+                loadingDialog.dismiss()
+                if (deleteAccountResponse.isSuccessful) {
+                    context?.toast(deleteAccountResponse.body()?.statusMessage ?: "")
+                    findNavController().navigate(R.id.action_delete_account_confirm)
+                } else
+                    context?.toast(Miscellaneous.extractErrorMessage(deleteAccountResponse.errorBody()?.string()))
             }
         }
     }
 
     private fun setupPendingRequest(requestId: String) {
+        loadingDialog.show()
+
         doAsync {
             val alterResponse = client.getRequestedConfigurationsForUser(model.token).execute()
 
             uiThread {
+                loadingDialog.dismiss()
                 val myRequest = alterResponse.body()?.request ?: AlterRequest("", 0, mutableListOf())
                 val stringBuilder = StringBuilder("")
                 for (word in myRequest.fields) {

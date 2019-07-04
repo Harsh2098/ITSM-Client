@@ -1,5 +1,6 @@
 package com.hmproductions.itsmclient.fragment
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Patterns
 import android.view.LayoutInflater
@@ -11,9 +12,9 @@ import androidx.navigation.fragment.findNavController
 import com.hmproductions.itsmclient.ITSMClient
 import com.hmproductions.itsmclient.R
 import com.hmproductions.itsmclient.dagger.DaggerITSMApplicationComponent
-import com.hmproductions.itsmclient.data.ITSMViewModel
 import com.hmproductions.itsmclient.data.AccountDetails
 import com.hmproductions.itsmclient.data.GenericAuthenticationDetails
+import com.hmproductions.itsmclient.data.ITSMViewModel
 import com.hmproductions.itsmclient.utils.Miscellaneous
 import kotlinx.android.synthetic.main.fragment_login.*
 import org.jetbrains.anko.doAsync
@@ -27,6 +28,7 @@ class LoginFragment : Fragment() {
     lateinit var client: ITSMClient
 
     private lateinit var model: ITSMViewModel
+    private lateinit var loadingDialog: AlertDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_login, container, false)
@@ -38,6 +40,10 @@ class LoginFragment : Fragment() {
 
         model = activity?.run { ViewModelProviders.of(this).get(ITSMViewModel::class.java) }
             ?: throw Exception("Invalid activity")
+
+        loadingDialog =
+            AlertDialog.Builder(context).setView(LayoutInflater.from(context).inflate(R.layout.loading_dialog, null))
+                .create()
 
         loginButton.setOnClickListener { setupLoginButton() }
         signUpNavButton.setOnClickListener { setupSignUpText() }
@@ -57,11 +63,15 @@ class LoginFragment : Fragment() {
             return
         }
 
+        loadingDialog.show()
+
         doAsync {
             val loginResponse = client
                 .login(AccountDetails(emailEditText.text.toString(), passwordEditText.text.toString())).execute()
 
             uiThread {
+                loadingDialog.dismiss()
+
                 if (loginResponse.isSuccessful) {
                     model.token = loginResponse.body()?.token ?: ""
                     model.designation = loginResponse.body()?.designation ?: "Unknown"
@@ -93,6 +103,8 @@ class LoginFragment : Fragment() {
             return
         }
 
+        loadingDialog.show()
+
         doAsync {
             val forgotPasswordResponse = client.forgotPassword(
                 GenericAuthenticationDetails(
@@ -102,6 +114,8 @@ class LoginFragment : Fragment() {
             ).execute()
 
             uiThread {
+                loadingDialog.dismiss()
+
                 if (forgotPasswordResponse.isSuccessful) {
                     context?.toast(forgotPasswordResponse.body()?.statusMessage ?: "")
                 } else

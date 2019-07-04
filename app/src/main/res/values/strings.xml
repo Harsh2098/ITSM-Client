@@ -38,6 +38,7 @@
     <string name="delete_account">Delete Account</string>
     <string name="pending_request">Pending Request Details</string>
     <string name="no_pending_requests">No pending requests</string>
+    <string name="fetching_your_request">Fetching your request…</string>
 
     <string-array name="designations">
         <item>CEO / MD</item>

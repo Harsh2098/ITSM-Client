@@ -33,6 +33,7 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
     private lateinit var configurationAdapter: ConfigurationRecyclerAdapter
     private lateinit var requestsAdapter: RequestRecyclerAdapter
     private lateinit var model: ITSMViewModel
+    private lateinit var loadingDialog: AlertDialog
 
     private var configurationList = mutableListOf<Configuration>()
     private var requestsList = mutableListOf<AlterRequest>()
@@ -53,6 +54,10 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
         model = activity?.run { ViewModelProviders.of(this).get(ITSMViewModel::class.java) }
             ?: throw Exception("Invalid activity")
 
+        loadingDialog =
+            AlertDialog.Builder(context).setView(LayoutInflater.from(context).inflate(R.layout.loading_dialog, null))
+                .create()
+
         configurationAdapter = ConfigurationRecyclerAdapter(context, null, this)
         configurationsRecyclerView.layoutManager = LinearLayoutManager(context)
         configurationsRecyclerView.adapter = configurationAdapter
@@ -71,10 +76,12 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
     }
 
     private fun getAllConfigurationsAsync() {
+        loadingDialog.show()
         doAsync {
             val configurationResponse = client.getConfigurations(model.token).execute()
 
             uiThread {
+                loadingDialog.dismiss()
                 if (configurationResponse.isSuccessful) {
                     var configurationList = configurationResponse.body()?.result?.configurations ?: mutableListOf()
                     if (configurationList.isNotEmpty()) {
@@ -94,10 +101,12 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
     }
 
     private fun getAllRequestedConfigurationsAsync() {
+        loadingDialog.show()
         doAsync {
             val alterResponse = client.getRequestedConfigurationsForAdmin(model.token).execute()
 
             uiThread {
+                loadingDialog.dismiss()
                 if (alterResponse.isSuccessful) {
                     var requestsList = alterResponse.body()?.requests ?: mutableListOf()
                     if (requestsList.isNotEmpty()) {
@@ -149,11 +158,13 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
     }
 
     private fun deleteRequestAsynchronously(requestId: String) {
+        loadingDialog.show()
         doAsync {
             val deleteRequestResponse =
                 client.deleteConfigurationRequest(model.token, DeleteConfigurationRequest(requestId)).execute()
 
             uiThread {
+                loadingDialog.dismiss()
                 if (deleteRequestResponse.isSuccessful) {
                     getAllRequestedConfigurationsAsync()
                     context?.toast(deleteRequestResponse.body()?.statusMessage ?: "")
@@ -165,13 +176,14 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
     }
 
     private fun acceptRequestAsynchronously(requestId: String) {
-
+        loadingDialog.show()
         doAsync {
             val currentTier = getTierFromRequestId(requestId)
             val allFields = getCombinedFields(configurationList, requestsList, requestId, currentTier)
             val setConfigurationResponse =
                 client.setConfiguration(model.token, ConfigurationRequest(currentTier, allFields)).execute()
             uiThread {
+                loadingDialog.dismiss()
                 if (setConfigurationResponse.isSuccessful) {
                     deleteRequestAsynchronously(requestId)
                     getAllRequestedConfigurationsAsync()
@@ -183,7 +195,12 @@ class AdminFragment : Fragment(), ConfigurationRecyclerAdapter.OnConfigurationCl
         }
     }
 
-    private fun getCombinedFields(configList: List<Configuration>, requestList: List<AlterRequest>, uniqueId: String, tier: Int): List<String> {
+    private fun getCombinedFields(
+        configList: List<Configuration>,
+        requestList: List<AlterRequest>,
+        uniqueId: String,
+        tier: Int
+    ): List<String> {
         val combinedFields = mutableListOf<String>()
         for (currentConfig in configList) {
             if (currentConfig.tier == tier)

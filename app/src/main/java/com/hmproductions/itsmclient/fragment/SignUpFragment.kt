@@ -1,5 +1,6 @@
 package com.hmproductions.itsmclient.fragment
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Patterns
 import android.view.LayoutInflater
@@ -24,6 +25,8 @@ class SignUpFragment : Fragment() {
     @Inject
     lateinit var client: ITSMClient
 
+    private lateinit var loadingDialog: AlertDialog
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_signup, container, false)
     }
@@ -31,6 +34,10 @@ class SignUpFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         DaggerITSMApplicationComponent.builder().build().inject(this)
+
+        loadingDialog =
+            AlertDialog.Builder(context).setView(LayoutInflater.from(context).inflate(R.layout.loading_dialog, null))
+                .create()
 
         val spinnerAdapter =
             ArrayAdapter.createFromResource(context!!, R.array.designations, android.R.layout.simple_list_item_1)
@@ -67,6 +74,8 @@ class SignUpFragment : Fragment() {
 
         val designation = resources.getStringArray(R.array.designations)[designationSpinner.selectedItemPosition]
 
+        loadingDialog.show()
+
         doAsync {
             val signUpResponse = client.signUp(
                 GenericAuthenticationDetails(
@@ -76,6 +85,7 @@ class SignUpFragment : Fragment() {
             ).execute()
 
             uiThread {
+                loadingDialog.show()
                 if (signUpResponse.isSuccessful) {
                     context?.toast(signUpResponse.body()?.statusMessage ?: "Registration success")
                     findNavController().navigateUp()

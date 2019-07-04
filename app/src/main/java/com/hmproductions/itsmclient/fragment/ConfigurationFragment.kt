@@ -1,5 +1,6 @@
 package com.hmproductions.itsmclient.fragment
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +15,6 @@ import com.hmproductions.itsmclient.adapter.FieldRecyclerAdapter
 import com.hmproductions.itsmclient.dagger.DaggerITSMApplicationComponent
 import com.hmproductions.itsmclient.data.ConfigurationRequest
 import com.hmproductions.itsmclient.data.ITSMViewModel
-import com.hmproductions.itsmclient.utils.Constants
 import com.hmproductions.itsmclient.utils.Constants.*
 import com.hmproductions.itsmclient.utils.Miscellaneous
 import kotlinx.android.synthetic.main.fragment_field.*
@@ -30,7 +30,8 @@ class ConfigurationFragment : Fragment() {
 
     private lateinit var fieldAdapter: FieldRecyclerAdapter
     private lateinit var model: ITSMViewModel
-    lateinit var mode: String
+    private lateinit var mode: String
+    private lateinit var loadingDialog: AlertDialog
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_field, container, false)
@@ -42,6 +43,10 @@ class ConfigurationFragment : Fragment() {
 
         model = activity?.run { ViewModelProviders.of(this).get(ITSMViewModel::class.java) }
             ?: throw Exception("Invalid activity")
+
+        loadingDialog =
+            AlertDialog.Builder(context).setView(LayoutInflater.from(context).inflate(R.layout.loading_dialog, null))
+                .create()
 
         fieldAdapter = FieldRecyclerAdapter(context, null)
         fieldsRecyclerView.layoutManager = LinearLayoutManager(context)
@@ -70,11 +75,13 @@ class ConfigurationFragment : Fragment() {
     }
 
     private fun getAllConfigurationsAsync() {
+        loadingDialog.show()
         doAsync {
             val fieldResponse = client.getAvailableFields(model.token).execute()
             val allConfigurationsResponse = client.getConfigurations(model.token).execute()
 
             uiThread {
+                loadingDialog.dismiss()
                 if (fieldResponse.isSuccessful) {
                     var fieldList = fieldResponse.body()?.configuration ?: mutableListOf()
                     if (fieldList.isNotEmpty()) {
@@ -83,7 +90,7 @@ class ConfigurationFragment : Fragment() {
                         var incomingList = mutableListOf<String>()
                         if (mode == ADMIN_USER)
                             incomingList =
-                                arguments?.getStringArrayList(Constants.ALREADY_SELECTED_KEY) ?: mutableListOf()
+                                arguments?.getStringArrayList(ALREADY_SELECTED_KEY) ?: mutableListOf()
                         else {
                             for (config in allConfigurationsResponse.body()?.result?.configurations
                                 ?: mutableListOf()) {
@@ -120,6 +127,8 @@ class ConfigurationFragment : Fragment() {
             return
         }
 
+        loadingDialog.show()
+
         doAsync {
             val genericResponse = if (mode == ADMIN_USER) {
                 client.setConfiguration(model.token, ConfigurationRequest(tierPicker.value, customList)).execute()
@@ -128,6 +137,8 @@ class ConfigurationFragment : Fragment() {
             }
 
             uiThread {
+                loadingDialog.dismiss()
+
                 if (genericResponse.isSuccessful) {
                     findNavController().navigateUp()
                     context?.toast(genericResponse.body()?.statusMessage ?: "")

@@ -1,5 +1,6 @@
 package com.hmproductions.itsmclient.fragment
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -32,6 +33,8 @@ class ReportFragment : Fragment(), ReportRecyclerAdapter.OnReportItemClickListen
     private lateinit var reportRecyclerAdapter: ReportRecyclerAdapter
     private lateinit var model: ITSMViewModel
 
+    private lateinit var loadingDialog: AlertDialog
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         return inflater.inflate(R.layout.fragment_report, container, false)
     }
@@ -42,6 +45,8 @@ class ReportFragment : Fragment(), ReportRecyclerAdapter.OnReportItemClickListen
 
         model = activity?.run { ViewModelProviders.of(this).get(ITSMViewModel::class.java) }
             ?: throw Exception("Invalid activity")
+
+        loadingDialog =  AlertDialog.Builder(context).setView(LayoutInflater.from(context).inflate(R.layout.loading_dialog, null)).create()
 
         coreData = arguments?.getParcelableArrayList(Constants.CORE_DATA_KEY)
             ?: mutableListOf<CoreData>() as ArrayList<CoreData>
@@ -55,10 +60,13 @@ class ReportFragment : Fragment(), ReportRecyclerAdapter.OnReportItemClickListen
     }
 
     private fun setupReport() {
+        loadingDialog.show()
+
         doAsync {
             val reportResponse = client.getReport(model.token).execute()
 
             uiThread {
+                loadingDialog.dismiss()
                 reportRecyclerAdapter.swapData(extractReportFromJson(reportResponse.body()?.string() ?: ""))
             }
         }
