@@ -64,9 +64,10 @@ class HomeFragment : Fragment() {
             val coreDataResponse = client.getCoreData(model.token).execute()
 
             uiThread {
-                if(!coreDataResponse.isSuccessful) {
+                if (!coreDataResponse.isSuccessful) {
                     context?.toast(Miscellaneous.extractErrorMessage(coreDataResponse.errorBody()?.string()))
                     flipVisibilities(false)
+                    intelligentReportButton.setOnClickListener { findNavController().navigate(R.id.action_report) }
                     return@uiThread
                 }
 
@@ -92,7 +93,7 @@ class HomeFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId) {
+        when (item.itemId) {
             R.id.action_logout -> {
                 findNavController().navigateUp()
             }
@@ -119,7 +120,12 @@ class HomeFragment : Fragment() {
                     val key = iterator.next()
                     val fieldObject = currentField.getJSONObject(key)
                     val valuesArray = fieldObject.getJSONArray("values")
-                    val newCoreData = CoreData(key, mutableListOf(), mutableListOf(), getPriorityFromString(fieldObject.getString("rank")))
+                    val newCoreData = CoreData(
+                        key,
+                        mutableListOf(),
+                        mutableListOf(),
+                        getPriorityFromString(fieldObject.getString("rank"))
+                    )
 
                     for (j in 0 until fieldObject.length()) {
                         try {
@@ -133,7 +139,7 @@ class HomeFragment : Fragment() {
                         }
                     }
 
-                    if(newCoreData.stringValues.size == 0 && newCoreData.intValues.size == 0)
+                    if (newCoreData.stringValues.size == 0 && newCoreData.intValues.size == 0)
                         continue
 
                     answer.add(newCoreData)

@@ -2,6 +2,7 @@ package com.hmproductions.itsmclient
 
 import com.hmproductions.itsmclient.data.*
 import okhttp3.ResponseBody
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -45,4 +46,7 @@ interface ITSMClient {
 
     @HTTP(method = "DELETE", path = "alter", hasBody = true)
     fun deleteConfigurationRequest(@Header("Authorization") authorization: String, @Body deleteConfigurationRequest: DeleteConfigurationRequest): Call<GenericResponse>
+
+    @GET("report")
+    fun getReport(@Header("Authorization") authorization: String): Call<ResponseBody>
 }

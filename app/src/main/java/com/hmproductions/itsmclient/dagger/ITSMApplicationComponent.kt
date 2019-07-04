@@ -16,4 +16,5 @@ interface ITSMApplicationComponent {
     fun inject(configurationFragment: ConfigurationFragment)
     fun inject(homeFragment: HomeFragment)
     fun inject(profileFragment: ProfileFragment)
+    fun inject(reportFragment: ReportFragment)
 }
